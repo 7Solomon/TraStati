@@ -1,2 +1,2 @@
 # TraStati
-Generierung und erkennung statischer Systeme miitels Transformer
+Generierung und erkennung statischer Systeme mitels Transformer
