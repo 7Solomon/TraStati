@@ -1,0 +1,8 @@
+data_folder/datasets/*
+neural_network_stuff/models/*
+data_folder/noised_images/*
+data_folder/cut_images/*
+data_folder/rotated_images/*
+data_folder/get_system_image/img/*
+data_folder/test_dataloader/train/*
+data_folder/test_dataloader/val/*
