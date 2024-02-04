@@ -18,41 +18,62 @@ def create_folders():
 
 def look_trough_dataset():
     datasets = list(set(["_".join(e.split('_')[:-1]) for e in os.listdir('data_folder/datasets/')]))
-    
-    for i, dataset in enumerate(datasets):
-        print(f'{i}: {dataset}')
-    print('---------')
-    idx_set = input('What datasets do you want? ')
 
-    dataset_name = datasets[int(idx_set)]
-    load_dataset_and_ask_for_idx(dataset_name)
+    if len(datasets) != 0:        # Wenn es Datasets gibt
+        # Auflisten der Datensätze
+        for i, dataset in enumerate(datasets):
+            print(f'{i}: {dataset}')
+        print('---------')
+        idx_set = input('What datasets do you want? ')
+
+        dataset_name = datasets[int(idx_set)]
+        load_dataset_and_ask_for_idx(dataset_name)
+    else:
+        print('Keine Datasets vorhanden')
     
 def test_and_visualize_model():
     models = os.listdir('neural_network_stuff/models/')
     datasets =  list(set(["_".join(e.split('_')[:-1]) for e in os.listdir('data_folder/datasets/')]))
-    for i, dataset in enumerate(datasets):
-        print(f'{i}: {dataset}')
-    print('---------')
-    idx_set = input('What datasets do you want? ')
-    dataset_name = datasets[int(idx_set)]
+    
+    # Auflisten der Datensätze
+    if len(datasets) != 0:                  # Wenn es Datasets gibt
+        for i, dataset in enumerate(datasets):
+            print(f'{i}: {dataset}')
+        print('---------')
+        idx_set = input('What datasets do you want? ')
+        dataset_name = datasets[int(idx_set)]
 
-    for i, model in enumerate(models):
-        print(f'{i}: {model}')
-    print('---------')
-    idx_modell = input('What model do you want? ')
-    model_name = models[int(idx_modell)]
 
-    # Load Dataset
-    train_set, val_set = load_datasets(dataset_name)
-    print('---------')
-    print(f'Anzahl an Images:{train_set.__len__()}')
-    go_loop = True
-    while go_loop:
-        idx = input('Welches Bild willst du Checken? ')
-        if idx == 'cap' or idx == 'stop' or idx == 'halt':
-            go_loop = False
-        else:
-            visualize_output(train_set, model_name, idx)
+        # Laden des Datensatzes
+        train_set, val_set = load_datasets(dataset_name)
+        print('---------')
+        print(f'Anzahl an Images:{train_set.__len__()}')
+
+
+    else:
+        print('Keine Datenätze vorhanden')
+
+    
+    # Auflisten der Modelle
+    if len(models) != 0:
+        for i, model in enumerate(models):
+            print(f'{i}: {model}')
+        print('---------')
+        idx_modell = input('What model do you want? ')
+        model_name = models[int(idx_modell)]
+
+        go_loop = True
+        while go_loop:
+            idx = input('Welches Bild willst du Checken? ')
+            if idx == 'cap' or idx == 'stop' or idx == 'halt':
+                go_loop = False
+            else:
+                visualize_output(train_set, model_name, idx)
+    else:
+        print('Keine Modelle vorhanden')
+        
+    
+    
 
 
 
@@ -86,22 +107,31 @@ def train():
     models = [*os.listdir('neural_network_stuff/models/'), 'Willst du ein neues generieren?']
     datasets =  list(set(["_".join(e.split('_')[:-1]) for e in os.listdir('data_folder/datasets/')]))
     
+    # Auflisten der Datensätze
+    if len(datasets) != 0:                  # Wenn es Datasets gibt
+        for i, dataset in enumerate(datasets):
+            print(f'{i}: {dataset}')
+        print('---------')
+        idx_set = input('What datasets do you want? ')
+        dataset_name = datasets[int(idx_set)]
+
+        # Laden des Datensatzes
+        train_set, val_set = load_datasets(dataset_name)
+    else:                              
+        print('Keine Datenätze vorhanden')
+        return
+
+    # Auflisten der Modelle
     for i, model in enumerate(models):
         print(f'{i}: {model}')
     print('---------')
     idx_modell = input('What model do you want? ')
     model_name = models[int(idx_modell)]
 
-    for i, dataset in enumerate(datasets):
-        print(f'{i}: {dataset}')
-    print('---------')
-    idx_set = input('What datasets do you want? ')
-    dataset_name = datasets[int(idx_set)]
-
     print('---------')
     num_eppochs = input('Anzahl der Epochen? ')
 
-    train_set, val_set = load_datasets(dataset_name)
+    
     image_size = train_set.image_dic[train_set.id_list[0]].size
     model = testDetr(image_size=image_size)
     #print(idx_set,str(len(models)-1))
