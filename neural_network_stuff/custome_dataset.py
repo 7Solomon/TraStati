@@ -80,12 +80,16 @@ class CustomImageDataset(Dataset):
 
     def __getitem__(self, idx):
         id = self.id_list[idx]
-
+        
         image = self.transform(self.image_dic[id])
         label = self.target_transform(self.label_dic[id])
         return image, label
     
-    
+    def merge_dataset(self,dataset):
+        self.id_list.extend(dataset.id_list)
+        self.label_dic.update(dataset.label_dic)
+        self.image_dic.update(dataset.image_dic)
+
     def add_new_data(self, new_path):
         self.get_data(new_path)
 

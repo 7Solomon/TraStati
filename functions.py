@@ -5,7 +5,7 @@ from neural_network_stuff.custome_loss import CustomeComLoss
 from neural_network_stuff.train import train_net
 from neural_network_stuff.test_detr_model import testDetr
 from data_folder.create_data_folder import create_valTrain_folder
-from data_folder.manage_datasets import loop_iteration_for_datasets, create_datasets, load_datasets
+from data_folder.manage_datasets import loop_iteration_for_datasets, create_datasets, load_datasets, add_to_datasets
 from visualize.visualize_dataset import load_dataset_and_ask_for_idx
 from visualize.visualize_output import visualize_output
 
@@ -13,6 +13,41 @@ from visualize.visualize_output import visualize_output
 def create_folders():
     create_valTrain_folder('data_folder/test_dataloader')    # Random und n können hier rein
 
+
+def data_creation_for_loop(base_train=None, base_val=None):
+    if base_train == None and base_val == None:
+        create_valTrain_folder('data_folder/test_dataloader',n=10, randomize=True)
+        create_datasets('base_dataset')
+        base_train, base_val = load_datasets('base_dataset')
+    
+
+    create_valTrain_folder('data_folder/test_dataloader',n=40, randomize=True)
+    create_datasets('extended_dataset')
+
+    extended_train, extended_val = load_datasets('extended_dataset')
+    base_train = add_to_datasets(base_train, extended_train)
+    base_val = add_to_datasets(base_val, extended_val)
+    return base_train, base_val
+
+def train_model_on_loop_dataset(train, val, modell=None):
+    if modell == None:
+        modell = testDetr(image_size=train.image_dic[train.id_list[0]].size)
+    
+    model_state = train_net(modell, train, val, num_epochs=10, load_model=None, save_as='endless_loop_model')
+    return modell.load_state_dict(model_state)
+    
+def endless_loop():
+    n = input('Wie lange willst du Loopen?')
+
+    base_train, base_val = data_creation_for_loop()
+    model = train_model_on_loop_dataset(base_train, base_val, modell=model)
+    for _ in range(n):
+        base_train, base_val = data_creation_for_loop(base_train, base_val)
+        model = train_model_on_loop_dataset(base_train, base_val, modell=model)
+        print('---------')
+    
+
+    
 
 
 
@@ -153,5 +188,5 @@ def train():
     
 
 if __name__ == "__main__":
-    train()
+    print('Du bist in der falschen Datei')
 

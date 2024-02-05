@@ -31,15 +31,15 @@ class CustomeDataLoss(torch.nn.Module):
         predicted_x, predicted_y, predicted_degree = predicted.split(1, dim=2)
         target_x, target_y, target_degree = target.split(1, dim=2)
 
-        print(f'Predicted X:{predicted_x} Predicted Y:{predicted_y} Predicted Degree:{predicted_degree}')
-        print(f'Target X:{target_x} Target Y:{target_y} Target Degree:{target_degree}')
+        #print(f'Predicted X:{predicted_x} Predicted Y:{predicted_y} Predicted Degree:{predicted_degree}')
+        #print(f'Target X:{target_x} Target Y:{target_y} Target Degree:{target_degree}')
 
         loss_x = torch.mean((predicted_x - target_x)**2)
         loss_y = torch.mean((predicted_y - target_y)**2)
 
         loss_degree = torch.mean(((predicted_degree - target_degree) % 360)**2)
         total_loss = loss_x*self.x_weight + loss_y*self.y_weight + loss_degree*self.degree_weight
-        print(f'Data Loss:{total_loss}')
+        #print(f'Data Loss:{total_loss}')
         return total_loss
     
 class CustomeClassLoss(torch.nn.Module):
@@ -49,7 +49,7 @@ class CustomeClassLoss(torch.nn.Module):
     def forward(self, predicted_logits, target_labels):
         criterion = torch.nn.CrossEntropyLoss()
         loss = criterion(predicted_logits, target_labels)
-        print(f'Class Loss:{loss}')
+        #print(f'Class Loss:{loss}')
         return loss
     
 

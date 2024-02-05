@@ -36,7 +36,10 @@ def loop_iteration_for_datasets(dataset_name,iteration_length,n=100, randomize=T
         create_valTrain_folder('data_folder/test_dataloader',n=n, randomize=randomize)
         add_data_to_dataset(dataset_name)
         
-        
+
+def add_to_datasets(d_1,d_2):
+    d_1.merge_dataset(d_2)   
+    return d_1 
 
 
 

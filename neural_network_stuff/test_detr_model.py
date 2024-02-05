@@ -57,7 +57,7 @@ class testDetr(nn.Module):
         scaled_data_data[:, 1] = data_data[:, 1] * self.image_size[1]  
         scaled_data_data[:, 3] = data_data[:, 3] * 360 
 
-        scaled_data_data = scaled_data_data(dype=torch.int32)
+        scaled_data_data = scaled_data_data.to(dtype=torch.int32)
         return {'classes': class_data, 'data': scaled_data_data}
 
 

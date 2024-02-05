@@ -44,12 +44,12 @@ def loopSystem(randomize=False):
 
     label_list = []
     grid, connector_list = generate_a_connected_grid(3, 3, PROB=0.3)
-    print(connector_list)
+    #print(connector_list)
     
     #VISUALIZE
     #print('ACHTUNG: visualisierung ist nicht ganz richtig')  jetzt ist es richtig
-    for line in grid:
-        print(line)
+    #for line in grid:
+    #    print(line)
  
     lager_liste = get_lengths(grid, randomize=randomize)
     
@@ -87,12 +87,12 @@ def writeALager(n_i,position_x,position_y, type, rotation, i, j):
 def connect_lager(connector_list, lager_liste, positionABCMap_passed):
     global data
     allready_connected = []
-    print(lager_liste)
-    print(positionABCMap_passed)
+    #print(lager_liste)
+    #print(positionABCMap_passed)
 
     for balken in connector_list:
         first_lager, second_lager = positionABCMap_passed[balken[0]], positionABCMap_passed[balken[1]]
-        print((first_lager,second_lager))
+        #print((first_lager,second_lager))
 
         if (first_lager,second_lager) in allready_connected or (second_lager,first_lager) in allready_connected:
             continue
@@ -131,7 +131,7 @@ def connect_lager(connector_list, lager_liste, positionABCMap_passed):
 def getSystemAndSave(randomize=False):
     global data
     open("data.tex", "w").close()
-
+    data += '\\batchmode'
     data += '\\documentclass[12pt,letterpaper]{article}'
     data += '\n'
     data += '\\usepackage{tikz}'

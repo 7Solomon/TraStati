@@ -46,6 +46,7 @@ def train_net(model,training_set,val_set,num_epochs=120, load_model='neural_netw
 
     #plt.
     torch.save(model.state_dict(), f'neural_network_stuff/models/{save_as}')
+    return model.state_dict()
 
 
 transform = transforms.Compose([
