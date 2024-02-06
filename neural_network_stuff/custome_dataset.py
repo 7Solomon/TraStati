@@ -11,9 +11,11 @@ from torch.utils.data import DataLoader
 from visualize.draw_graph import get_degree_lines, draw_stuff_on_image_and_save, get_points_from_label
 
 transform = transforms.Compose([
-    transforms.Resize((224, 224)),  # Adjust the size as needed
-    transforms.ToTensor(),
-])
+        transforms.ToTensor(),  # Konvertiert das Bild in einen Tensor
+        transforms.Resize((840, 960)),  # Ändert die Größe des Bildes
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),  # Normalisiert die Pixelwerte
+    ])
+
 
 def target_transform(label):
     parsed_data = label

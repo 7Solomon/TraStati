@@ -85,11 +85,16 @@ class testDetr(nn.Module):
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-transform = transforms.Compose([
-    transforms.Resize((224, 224)),  # Adjust the size as needed
-    transforms.ToTensor(),
-])
+#transform = transforms.Compose([      # Old transform
+#    transforms.Resize((224, 224)),  # Adjust the size as needed
+#    transforms.ToTensor(),
+#])
 
+transform = transforms.Compose([
+        transforms.ToTensor(),  # Konvertiert das Bild in einen Tensor
+        transforms.Resize((840, 960)),  # Ändert die Größe des Bildes
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),  # Normalisiert die Pixelwerte
+    ])
 
 if __name__ == '__main__':
 

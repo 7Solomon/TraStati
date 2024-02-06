@@ -34,13 +34,28 @@ def train_model_on_loop_dataset(train, val, modell=None):
         modell = testDetr(image_size=train.image_dic[train.id_list[0]].size)
     
     model_state = train_net(modell, train, val, num_epochs=10, load_model=None, save_as='endless_loop_model')
-    return modell.load_state_dict(model_state)
+    modell.load_state_dict(model_state)
+    return modell
     
 def endless_loop():
-    n = input('Wie lange willst du Loopen?')
-
+    # Einlesesn der Anzahl an Loops
+    try:
+        n = int(input('Wie lange willst du Loopen?'))
+    except:
+        print('Du hast kein Int angegeben')
+        return
+    
+    # Erstellen des ersten Datensatzes
     base_train, base_val = data_creation_for_loop()
-    model = train_model_on_loop_dataset(base_train, base_val, modell=model)
+
+    # Laden des Endlosen Modells
+    if torch.load('neural_network_stuff/models/endless_loop_model') == None:
+        model = train_model_on_loop_dataset(base_train, base_val, modell=None)
+    else:
+        model = testDetr(image_size=base_train.image_dic[base_train.id_list[0]].size)
+        model.load_state_dict(torch.load('neural_network_stuff/models/endless_loop_model'))
+        model = train_model_on_loop_dataset(base_train, base_val, modell=model)
+    
     for _ in range(n):
         base_train, base_val = data_creation_for_loop(base_train, base_val)
         model = train_model_on_loop_dataset(base_train, base_val, modell=model)
@@ -169,8 +184,7 @@ def train():
     
     image_size = train_set.image_dic[train_set.id_list[0]].size
     model = testDetr(image_size=image_size)
-    #print(idx_set,str(len(models)-1))
-    if idx_set == str(len(models)-1):
+    if idx_modell == str(len(models)-1):
         model_save_name = input('Wie willst du das neue Modell speichern?')
         train_net(model, train_set, val_set, num_epochs=int(num_eppochs), load_model=None, save_as=model_save_name)
     else:
