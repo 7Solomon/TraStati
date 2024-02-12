@@ -1,14 +1,14 @@
+import torch.nn as nn
 import math
 import torch
-import torchvision
-from torch import nn
-import torch.nn.functional as F
-import matplotlib.pyplot as plt
-import torchvision.transforms as T
-from scipy.optimize import linear_sum_assignment
-from torchvision.models._utils import IntermediateLayerGetter
+
+from neural_network_stuff.custome_DETR.misc_stuff import NestedTensor
 
 class PositionEmbeddingSine(nn.Module):
+    """
+    This is a more standard version of the position embedding, very similar to the one
+    used by the Attention is all you need paper, generalized to work on images.
+    """
     def __init__(self, num_pos_feats=64, temperature=10000, normalize=False, scale=None):
         super().__init__()
         self.num_pos_feats = num_pos_feats
@@ -19,8 +19,10 @@ class PositionEmbeddingSine(nn.Module):
         if scale is None:
             scale = 2 * math.pi
         self.scale = scale
-    
-    def forward(self, x, mask):
+
+    def forward(self, tensor_list: NestedTensor):
+        x = tensor_list.tensors
+        mask = tensor_list.mask
         assert mask is not None
         not_mask = ~mask
         y_embed = not_mask.cumsum(1, dtype=torch.float32)
@@ -39,3 +41,20 @@ class PositionEmbeddingSine(nn.Module):
         pos_y = torch.stack((pos_y[:, :, :, 0::2].sin(), pos_y[:, :, :, 1::2].cos()), dim=4).flatten(3)
         pos = torch.cat((pos_y, pos_x), dim=3).permute(0, 3, 1, 2)
         return pos
+
+
+
+
+
+
+
+def build_position_encoding():
+    N_steps = 256 // 2   # 256 is the default value von hidden dim
+    #if args.position_embedding in ('v2', 'sine'):
+    position_embedding = PositionEmbeddingSine(N_steps, normalize=True)
+    #elif args.position_embedding in ('v3', 'learned'):             # Ich nehme einfach immer Sine
+    #    position_embedding = PositionEmbeddingLearned(N_steps)
+    #else:
+    #    raise ValueError(f"not supported {args.position_embedding}")
+
+    return position_embedding
