@@ -1,17 +1,15 @@
 import torch
 
-from neural_network_stuff.test_detr_model import testDetr
-from neural_network_stuff.custome_loss import CustomeComLoss
 from data_folder.manage_datasets import load_datasets
 from visualize.draw_graph import draw_stuff_on_image_and_save, get_degree_lines
+from neural_network_stuff.custome_DETR.detr import build
 
 def visualize_output(train_set, model_name, idx):
     image = train_set.image_dic[train_set.id_list[int(idx)]]
     image_size = train_set.image_dic[train_set.id_list[int(idx)]].size
 
-    model = testDetr(image_size=image_size)
+    model, criterion = build()
     model.load_state_dict(torch.load(f'neural_network_stuff/models/{model_name}'))
-    criterion = CustomeComLoss()
     
 
     item_img, item_label = train_set.__getitem__(int(idx))

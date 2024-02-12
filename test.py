@@ -1,3 +1,4 @@
+import sys, math
 from PIL import Image
 import torch
 from torchvision import transforms
@@ -65,17 +66,39 @@ def test():
         model.train()
         criterion.train()
 
-        for samples, targets in data_loader_train:
+        for i, (samples, targets) in enumerate(data_loader_train):
             samples = samples.to(device)
             targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
             outputs = model(samples)
-            print(outputs['outputs_class'].__sizeof__())
-            print(outputs['output_center_degree_points'].__sizeof__())
-            #print(targets)
-            #loss_dict = criterion(outputs, targets)
+
+            loss_dict = criterion(outputs, targets)   # Loss data
+            
+            weight_dict = criterion.weight_dict         # Von der Dokumentation
+            losses = sum(loss_dict[k] * weight_dict[k] for k in loss_dict.keys() if k in weight_dict)
 
 
-        #lr_scheduler.step()
+            # reduce losses over all GPUs for logging purposes    Glaube brauch ich nicht aber ka 
+            loss_dict_reduced = misc_stuff.reduce_dict(loss_dict)
+            loss_dict_reduced_unscaled = {f'{k}_unscaled': v
+                                        for k, v in loss_dict_reduced.items()}
+            loss_dict_reduced_scaled = {k: v * weight_dict[k]
+                                        for k, v in loss_dict_reduced.items() if k in weight_dict}
+            losses_reduced_scaled = sum(loss_dict_reduced_scaled.values())
+            loss_value = losses_reduced_scaled.item()
+            
+            print(f'Loss: {loss_value}, image [{i}]  in epoch {epoch}/{n_epochs}')
+
+
+            if not math.isfinite(loss_value):
+                print("Loss is {}, stopping training".format(loss_value))
+                print(loss_dict_reduced)
+                sys.exit(1)
+
+            optimizer.zero_grad()
+            losses.backward()
+            if clip_max_norm > 0:
+                torch.nn.utils.clip_grad_norm_(model.parameters(), clip_max_norm)
+            optimizer.step()
 
 
 
