@@ -65,17 +65,12 @@ def test():
         model.train()
         criterion.train()
 
-        metric_logger = misc_stuff.MetricLogger(delimiter="  ")
-        metric_logger.add_meter('lr', misc_stuff.SmoothedValue(window_size=1, fmt='{value:.6f}'))
-        metric_logger.add_meter('class_error', misc_stuff.SmoothedValue(window_size=1, fmt='{value:.2f}'))
-        header = 'Epoch: [{}]'.format(epoch)
-        print_freq = 10
-
         for samples, targets in data_loader_train:
             samples = samples.to(device)
             targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
             outputs = model(samples)
             print(outputs['outputs_class'].__sizeof__())
+            print(outputs['output_center_degree_points'].__sizeof__())
             #print(targets)
             #loss_dict = criterion(outputs, targets)
 
