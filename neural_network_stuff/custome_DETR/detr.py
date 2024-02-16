@@ -58,6 +58,8 @@ class CustomeDetrModel(nn.Module):
 
         output_center_degree_points = self.linear_data(hs)
         outputs_class = self.linear_class(hs).sigmoid()
+
+        #degrees = [int(360/64*deg) for deg in degrees]
         out = {'outputs_class': outputs_class[-1], 'output_center_degree_points': output_center_degree_points[-1]}
         return out
 
@@ -173,7 +175,6 @@ class SetCriterion(nn.Module):
 
         target_masks = target_masks.flatten(1)
         target_masks = target_masks.view(src_masks.shape)
-        print('target_mask_type: ',type(target_masks))
         #losses = {
         #    "loss_mask": sigmoid_focal_loss(src_masks, target_masks, num_boxes),
         #    "loss_dice": dice_loss(src_masks, target_masks, num_boxes),
@@ -211,7 +212,6 @@ class SetCriterion(nn.Module):
                       The expected keys in each dict depends on the losses applied, see each loss' doc
         """
         outputs_without_aux = {k: v for k, v in outputs.items() if k != 'aux_outputs'}
-
         # Retrieve the matching between the outputs of the last layer and the targets
         indices = self.matcher(outputs_without_aux, targets)
 
@@ -226,22 +226,21 @@ class SetCriterion(nn.Module):
         losses = {}
         for loss in self.losses:
             losses.update(self.get_loss(loss, outputs, targets, indices, num_points))
-
         # In case of auxiliary losses, we repeat this process with the output of each intermediate layer.
-        if 'aux_outputs' in outputs:
-            for i, aux_outputs in enumerate(outputs['aux_outputs']):
-                indices = self.matcher(aux_outputs, targets)
-                for loss in self.losses:
-                    if loss == 'masks':
-                        # Intermediate masks losses are too costly to compute, we ignore them.
-                        continue
-                    kwargs = {}
-                    if loss == 'labels':
-                        # Logging is enabled only for the last layer
-                        kwargs = {'log': False}
-                    l_dict = self.get_loss(loss, aux_outputs, targets, indices, num_points, **kwargs)
-                    l_dict = {k + f'_{i}': v for k, v in l_dict.items()}
-                    losses.update(l_dict)
+        #if 'aux_outputs' in outputs:
+        #    for i, aux_outputs in enumerate(outputs['aux_outputs']):
+        #        indices = self.matcher(aux_outputs, targets)
+        #        for loss in self.losses:
+        #            if loss == 'masks':
+        #                # Intermediate masks losses are too costly to compute, we ignore them.
+        #                continue
+        #            kwargs = {}
+        #            if loss == 'labels':
+        #                # Logging is enabled only for the last layer
+        #                kwargs = {'log': False}
+        #            l_dict = self.get_loss(loss, aux_outputs, targets, indices, num_points, **kwargs)
+        #            l_dict = {k + f'_{i}': v for k, v in l_dict.items()}
+        #            losses.update(l_dict)
 
         return losses
     

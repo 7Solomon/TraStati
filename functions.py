@@ -185,14 +185,14 @@ def train():
     model, criterion = build()
     if idx_modell == str(len(models)-1):
         model_save_name = input('Wie willst du das neue Modell speichern?')
-        train_net(model, criterion, train_set, val_set, num_epochs=int(num_eppochs), load_model=None, save_as=model_save_name)
+        train_net(model, criterion, train_set, val_set, num_epochs=int(num_eppochs), load_model=None, save_as=f'neural_network_stuff/models/{model_name}')
     else:
         save = input('Willst du das Modell Überschreiben? [Y/n]: ').strip().lower() or 'y'
         if save == 'y':
             train_net(model, criterion, train_set, val_set, num_epochs=int(num_eppochs), load_model=f'neural_network_stuff/models/{model_name}', save_as=f'neural_network_stuff/models/{model_name}')
         elif save == 'n':
             model_save_name = input('Wie willst du das neue Modell speichern?')
-            train_net(model, criterion, train_set, val_set, num_epochs=int(num_eppochs), load_model=f'neural_network_stuff/models/{model_name}', save_as=model_save_name)
+            train_net(model, criterion, train_set, val_set, num_epochs=int(num_eppochs), load_model=f'neural_network_stuff/models/{model_name}', save_as=f'neural_network_stuff/models/{model_name}')
        
         else:
             print('Not Valid')

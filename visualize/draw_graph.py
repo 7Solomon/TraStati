@@ -29,6 +29,7 @@ def draw_stuff_on_image_and_save(img, points, degree_lines):
     line_color = (0, 0, 1) 
     
     for point in points:
+        print(point)
         ax.scatter(point[0], point[1], color=point_color)
 
     for line in degree_lines:
@@ -104,6 +105,7 @@ def draw_some_item(idx,path = 'data_folder/test_dataloader/train/'):
     some_key, some_value = list(dict.items())[idx]
     img, points, degree_lines = get_points_and_path(path,some_key,some_value)
     #print(degree_lines)
+    print(points)
     draw_stuff_on_image_and_save(img, points,degree_lines)
 
 def test_drawer(value,img):

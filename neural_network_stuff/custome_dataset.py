@@ -19,27 +19,27 @@ transform = transforms.Compose([
 
 def target_transform(label):
     parsed_data = label
-    tensor_data = []
+    items_data = []
     class_data = []
     
     for i, item in enumerate(parsed_data):
-            
+
         condensed_item = [item[0][0],item[0][1],*item[2:]]
-        tensor_item = torch.tensor(condensed_item, dtype=torch.float32)  
-        tensor_data.append(tensor_item)
+
+        items_data.append(condensed_item)
         class_data.append(item[1])
-
-    # Muss gelten
-    assert len(tensor_data) == len(class_data)
-
+    
+    # Change format
+    tensor_data = torch.tensor([[x/840, y/960, degree/360] for x,y,degree in items_data], dtype=torch.float32)
+    assert len(tensor_data) == len(class_data) 
     if len(tensor_data) > 20:
         print('Du hast eine System mit mehr als 20 knoten, passe auf nur die ersten 20 werden genommen')
         transformed_data = torch.stack(tensor_data[:20])
         transformed_class_data = torch.stack(class_data[:20])
+        
     else:
         transformed_data = torch.stack([*tensor_data, *[torch.tensor([0, 0, 0], dtype=torch.float32) for _ in range(20 - len(tensor_data))]])
         transformed_class_data = torch.tensor([*class_data, *[0 for _ in range(20 - len(tensor_data))]])
-    
     return {'classes': transformed_class_data,'data':transformed_data}
 
 

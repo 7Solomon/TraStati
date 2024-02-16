@@ -1,6 +1,11 @@
 import argparse
 from functions import train, data, look_trough_dataset, test_and_visualize_model, endless_loop
 
+#functions = {'data':data,
+#             'display':look_trough_dataset,
+#             'test':test_and_visualize_model,
+#             'loop':endless_loop}
+
 def parse_arguments():
     parser = argparse.ArgumentParser(description='This is a Parser')
     parser.add_argument('--train', action='store_true', help='Bro KA')
@@ -9,6 +14,7 @@ def parse_arguments():
     parser.add_argument('--test', action='store_true', help='Bro KA')
     parser.add_argument('--loop', action='store_true', help='Bro KA')
     return parser.parse_args()
+
 
 
 def main():

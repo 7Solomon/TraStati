@@ -68,29 +68,30 @@ def train_net(model, criterion, training_set, val_set, num_epochs=120, load_mode
             samples = samples.to(device)
             targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
             outputs = model(samples)
-
+        
             loss_dict = criterion(outputs, targets)   # Loss data
             
             weight_dict = criterion.weight_dict         # Von der Dokumentation
+
             losses = sum(loss_dict[k] * weight_dict[k] for k in loss_dict.keys() if k in weight_dict)
 
 
             # reduce losses over all GPUs for logging purposes    Glaube brauch ich nicht aber ka 
-            loss_dict_reduced = misc_stuff.reduce_dict(loss_dict)
-            loss_dict_reduced_unscaled = {f'{k}_unscaled': v
-                                        for k, v in loss_dict_reduced.items()}
-            loss_dict_reduced_scaled = {k: v * weight_dict[k]
-                                        for k, v in loss_dict_reduced.items() if k in weight_dict}
-            losses_reduced_scaled = sum(loss_dict_reduced_scaled.values())
-            loss_value = losses_reduced_scaled.item()
+            #loss_dict_reduced = misc_stuff.reduce_dict(loss_dict)
+            #loss_dict_reduced_unscaled = {f'{k}_unscaled': v
+            #                            for k, v in loss_dict_reduced.items()}
+            #loss_dict_reduced_scaled = {k: v * weight_dict[k]
+            #                            for k, v in loss_dict_reduced.items() if k in weight_dict}
+            #losses_reduced_scaled = sum(loss_dict_reduced_scaled.values())
+            #loss_value = losses_reduced_scaled.item()
             
-            print(f'Loss: {loss_value}, image [{i}]  in epoch {epoch}/{n_epochs}')
+            print(f'Loss: {losses}, image[{i}]  in epoch {epoch}/{num_epochs}')
 
 
-            if not math.isfinite(loss_value):
-                print("Loss is {}, stopping training".format(loss_value))
-                print(loss_dict_reduced)
-                sys.exit(1)
+            #if not math.isfinite(loss_value):
+            #    print("Loss is {}, stopping training".format(loss_value))
+            #    print(loss_dict_reduced)
+            #    sys.exit(1)
 
             optimizer.zero_grad()
             losses.backward()
@@ -100,8 +101,8 @@ def train_net(model, criterion, training_set, val_set, num_epochs=120, load_mode
 
 
         
-        print(f"Epoch {epoch + 1}/{num_epochs}, Training Loss: {loss_value}")
-        plot_train_los.append(loss_value)
+        print(f"Epoch {epoch + 1}/{num_epochs}, Training Loss: {losses}")
+        plot_train_los.append(losses)
         plot_val_los.append('Not Implementiert du kek')
     
     # Länge des Trainings

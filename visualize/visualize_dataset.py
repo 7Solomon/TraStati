@@ -2,10 +2,13 @@ from data_folder.manage_datasets import load_datasets
 from visualize.draw_graph import get_degree_lines, draw_stuff_on_image_and_save
 from torchvision import transforms
 from PIL import Image
-inverse_transform = transforms.Compose([
-    transforms.Resize((640, 640)),
-    transforms.ToPILImage()
+
+transform_reverse = transforms.Compose([
+    transforms.Normalize(mean=[-0.485/0.229, -0.456/0.224, -0.406/0.225], std=[1/0.229, 1/0.224, 1/0.225]),
+    transforms.Resize((840, 960)),
+    #transforms.ToPILImage(),  
 ])
+
 
 
 def get_points(data):
