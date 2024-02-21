@@ -112,46 +112,48 @@ class SetCriterion(nn.Module):
                                     dtype=torch.int64, device=src_logits.device)
         target_classes[idx] = target_classes_o
 
-        loss_ce = nn.functional.cross_entropy(src_logits.transpose(1, 2), target_classes, self.empty_weight)
+        #print(src_logits.shape,target_classes.shape)
+        loss_ce = nn.functional.cross_entropy(src_logits.transpose(1, 2), target_classes, self.empty_weight, ignore_index=0)
         losses = {'loss_ce': loss_ce}
 
+        #print('------------Class LOSS-----------------')
+        #print(f'Output: {src_logits}')
+        #print(f'Target: {target_classes_o}')
+        #print(f'Data_loss: {loss_ce}')
         if log:
             # TODO this should probably be a separate loss, not hacked in this one here
             losses['class_error'] = 100 - accuracy(src_logits[idx], target_classes_o)[0]
         return losses
-
-    @torch.no_grad()
-    def loss_cardinality(self, outputs, targets, indices, num_points):
-        """ Compute the cardinality error, ie the absolute error in the number of predicted non-empty boxes
-        This is not really a loss, it is intended for logging purposes only. It doesn't propagate gradients
-        """
-
-        pred_outputs = outputs['outputs_class']
-        device = pred_outputs.device
-        tgt_lengths = torch.as_tensor([len(v["classes"]) for v in targets], device=device)
-        # Count the number of predictions that are NOT "no-object" (which is the last class)
-        card_pred = (pred_outputs.argmax(-1) != pred_outputs.shape[-1] - 1).sum(1)
-        card_err = nn.functional.l1_loss(card_pred.float(), tgt_lengths.float())
-        losses = {'cardinality_error': card_err}
-        return losses
+    
 
     def loss_center_degree(self, outputs, targets, indices, num_points):
-        """Compute the losses related to the bounding boxes, the L1 regression loss and the GIoU loss
-           targets dicts must contain the key "boxes" containing a tensor of dim [nb_target_boxes, 4]
-           The target boxes are expected in format (center_x, center_y, w, h), normalized by the image size.
-        """
-
         assert 'output_center_degree_points' in outputs
         idx = self._get_src_permutation_idx(indices)
         src_cds = outputs['output_center_degree_points'][idx]
         target_cds = torch.cat([t['data'][i] for t, (_, i) in zip(targets, indices)], dim=0)
 
+        # Dass die 0 Objekte nicht in Loss mit reinfließen
+        ignore_condition = torch.tensor([[a != 0 for a in t['classes']] for t in targets])
+        ignore_condition = ignore_condition.view(-1)
+
+        # Create a mask for positions to ignore
+        ignore_mask = (ignore_condition == 0)
+        # Compute L1 loss only for positions not to be ignored
         loss_cd = nn.functional.l1_loss(src_cds, target_cds, reduction='none')
+        loss_cd = loss_cd[ignore_mask]
+
 
         losses = {}
         losses['loss_cd'] = loss_cd.sum() / num_points
+        #print('------------DATA LOSS-----------------')
+        #print(f'Output: {src_cds}')
+        #print(f'Target: {target_cds}')
+        #print(f'Data_loss: {loss_cd.sum() / num_points}')
+#
         return losses
 
+
+    # Benutze ich nicht
     def loss_masks(self, outputs, targets, indices, num_points):
         """Compute the losses related to the masks: the focal loss and the dice loss.
            targets dicts must contain the key "masks" containing a tensor of dim [nb_target_boxes, h, w]
@@ -196,9 +198,8 @@ class SetCriterion(nn.Module):
     def get_loss(self, loss, outputs, targets, indices, num_points, **kwargs):
         loss_map = {
             'labels': self.loss_labels,
-            'cardinality': self.loss_cardinality,
             'center_degree': self.loss_center_degree,
-            'masks': self.loss_masks
+            #'masks': self.loss_masks
         }
 
         assert loss in loss_map, f'do you really want to compute {loss} loss?'
@@ -211,6 +212,8 @@ class SetCriterion(nn.Module):
              targets: list of dicts, such that len(targets) == batch_size.
                       The expected keys in each dict depends on the losses applied, see each loss' doc
         """
+        #print(f'outputs gesamt:{outputs}')
+        #print(f'target gesamt{targets}')
         outputs_without_aux = {k: v for k, v in outputs.items() if k != 'aux_outputs'}
         # Retrieve the matching between the outputs of the last layer and the targets
         indices = self.matcher(outputs_without_aux, targets)
@@ -226,22 +229,7 @@ class SetCriterion(nn.Module):
         losses = {}
         for loss in self.losses:
             losses.update(self.get_loss(loss, outputs, targets, indices, num_points))
-        # In case of auxiliary losses, we repeat this process with the output of each intermediate layer.
-        #if 'aux_outputs' in outputs:
-        #    for i, aux_outputs in enumerate(outputs['aux_outputs']):
-        #        indices = self.matcher(aux_outputs, targets)
-        #        for loss in self.losses:
-        #            if loss == 'masks':
-        #                # Intermediate masks losses are too costly to compute, we ignore them.
-        #                continue
-        #            kwargs = {}
-        #            if loss == 'labels':
-        #                # Logging is enabled only for the last layer
-        #                kwargs = {'log': False}
-        #            l_dict = self.get_loss(loss, aux_outputs, targets, indices, num_points, **kwargs)
-        #            l_dict = {k + f'_{i}': v for k, v in l_dict.items()}
-        #            losses.update(l_dict)
-
+        
         return losses
     
 
@@ -268,7 +256,7 @@ def build():
     weight_dict['loss_giou'] = giou_loss_coef
 
 
-    losses = ['labels', 'center_degree', 'cardinality']
+    losses = ['labels', 'center_degree']
 
     criterion = SetCriterion(num_classes, matcher=matcher, weight_dict=weight_dict,
                              eos_coef=eos_coef, losses=losses)
