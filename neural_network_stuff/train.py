@@ -17,7 +17,6 @@ def train_net(model, criterion, training_set, val_set, num_epochs=120, load_mode
     #val_set = CustomImageDataset('data_folder/test_dataloader/val/label.txt','data_folder/test_dataloader/val')
     batch_size = 2
     num_workers = 2   
-    n_epochs = 1
     clip_max_norm = 0.1
 
     # get device
@@ -36,7 +35,6 @@ def train_net(model, criterion, training_set, val_set, num_epochs=120, load_mode
     ]    
     optimizer = torch.optim.AdamW(param_dicts,lr=1e-4,
                                   weight_decay=1e-4)
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 200)
 
 
     # For plotting und so

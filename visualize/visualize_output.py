@@ -1,6 +1,7 @@
 import torch
 
 from data_folder.manage_datasets import load_datasets
+from neural_network_stuff.custome_DETR.misc_stuff import nested_tensor_from_tensor_list
 from visualize.draw_graph import draw_stuff_on_image_and_save, get_degree_lines
 from neural_network_stuff.custome_DETR.detr import build
 
@@ -12,9 +13,16 @@ def visualize_output(train_set, model_name, idx):
     model.load_state_dict(torch.load(f'neural_network_stuff/models/{model_name}'))
     
 
+    # Muss besser gelöst werden
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    device = torch.device(device)
+    model.to(device)
+
     item_img, item_label = train_set.__getitem__(int(idx))
-    item_label['data'], item_label['classes'] = item_label['data'].unsqueeze(0), item_label['classes'].unsqueeze(0)
-    output = model(item_img.unsqueeze(0))
+    samples = nested_tensor_from_tensor_list([item_img])          # Das eine Batch kommt []
+    samples = samples.to(device)
+    
+    output = model(samples)
 
     #print(output['output_center_degree_points'][0][0])
     #print(output['output_center_degree_points'][0][0])
@@ -28,7 +36,8 @@ def visualize_output(train_set, model_name, idx):
     degree_lines = get_degree_lines(points, degrees)
     draw_stuff_on_image_and_save(image,points,degree_lines)
 
-    loss = criterion(output,item_label)
+    target = [{k: v.to(device) for k, v in item_label.items()}]   # [] für Batch
+    loss = criterion(output, target)
     #print(points)
     #print(degrees)
-    #print(loss)
+    print(f'loss: {loss}')

@@ -29,7 +29,7 @@ def draw_stuff_on_image_and_save(img, points, degree_lines):
     line_color = (0, 0, 1) 
     
     for point in points:
-        print(point)
+        
         ax.scatter(point[0], point[1], color=point_color)
 
     for line in degree_lines:
