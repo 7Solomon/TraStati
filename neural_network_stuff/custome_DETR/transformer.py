@@ -276,7 +276,7 @@ def _get_clones(module, N):
 def build_transformer():
     return Transformer(
         d_model=128,
-        dropout=0.1,
+        dropout=0.5,
         nhead=4,
         dim_feedforward=1024,
         num_encoder_layers=3,
