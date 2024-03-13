@@ -116,6 +116,10 @@ class SetCriterion(nn.Module):
         loss_ce = nn.functional.cross_entropy(src_logits.transpose(1, 2), target_classes, self.empty_weight, ignore_index=0)
         losses = {'loss_ce': loss_ce}
 
+        #print(src_logits)
+        #print(target_classes)
+        #print(f'loss_cd: {loss_ce}')
+
         #print('------------Class LOSS-----------------')
         #print(f'Output: {src_logits}')
         #print(f'Target: {target_classes_o}')
@@ -141,7 +145,9 @@ class SetCriterion(nn.Module):
         # Compute L1 loss only for positions not to be ignored
         loss_cd = nn.functional.l1_loss(src_cds, target_cds, reduction='none')
         loss_cd = loss_cd[ignore_mask]
-
+        #print(src_cds)
+        #print(target_cds)
+        #print(f'loss_cd: {loss_cd}')
 
         losses = {}
         losses['loss_cd'] = loss_cd.sum() / num_points

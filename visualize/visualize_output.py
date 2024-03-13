@@ -3,6 +3,7 @@ import torch
 from data_folder.manage_datasets import load_datasets
 from neural_network_stuff.custome_DETR.misc_stuff import nested_tensor_from_tensor_list
 from visualize.draw_graph import draw_stuff_on_image_and_save, get_degree_lines
+from visualize.visualize_attention_map import attention_map
 from neural_network_stuff.custome_DETR.detr import build
 
 def visualize_output(train_set, model_name, idx):
@@ -23,9 +24,8 @@ def visualize_output(train_set, model_name, idx):
     samples = samples.to(device)
     
     output = model(samples)
-
-    #print(output['output_center_degree_points'][0][0])
-    #print(output['output_center_degree_points'][0][0])
+    attention_map(output["attentions"])
+    
     points = [(e[0].item(),e[1].item()) for e in output['output_center_degree_points'][0]]
     degrees = [e[2].item() for e in output['output_center_degree_points'][0]]
 

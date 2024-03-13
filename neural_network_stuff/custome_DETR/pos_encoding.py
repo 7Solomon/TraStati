@@ -49,7 +49,7 @@ class PositionEmbeddingSine(nn.Module):
 
 
 def build_position_encoding():
-    N_steps = 128 // 2   # 256 is the default value von hidden dim
+    N_steps = 256 // 2   # 256 is the default value von hidden dim
     #if args.position_embedding in ('v2', 'sine'):
     position_embedding = PositionEmbeddingSine(N_steps, normalize=True)
     #elif args.position_embedding in ('v3', 'learned'):             # Ich nehme einfach immer Sine

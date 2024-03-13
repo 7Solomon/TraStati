@@ -15,7 +15,7 @@ from neural_network_stuff.custome_DETR import misc_stuff
 def train_net(model, criterion, training_set, val_set, num_epochs=120, load_model='neural_network_stuff/models/v_1.pth', save_as='default'):
     #training_set= CustomImageDataset('data_folder/test_dataloader/train/label.txt','data_folder/test_dataloader/train')
     #val_set = CustomImageDataset('data_folder/test_dataloader/val/label.txt','data_folder/test_dataloader/val')
-    batch_size = 2
+    batch_size = 6
     num_workers = 2   
     clip_max_norm = 0.1
 

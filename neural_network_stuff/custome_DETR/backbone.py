@@ -105,7 +105,7 @@ class Joiner(nn.Sequential):
     
 def build_backbone():
     position_embedding = build_position_encoding()
-    train_backbone = 1e-4 #args.lr_backbone > 0    Learning rate for the backbone
+    train_backbone = 1e-6 #args.lr_backbone > 0    Learning rate for the backbone
     return_interm_layers = True #args.masks
     
     # Define das Backbone

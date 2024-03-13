@@ -9,7 +9,7 @@ from torchvision import transforms
 from torch.utils.data import DataLoader
 
 
-
+from visualize.visualize_attention_map import attention_map
 from neural_network_stuff.custome_DETR import misc_stuff
 
 
@@ -69,6 +69,8 @@ def test():
         weight_dict = criterion.weight_dict         # Von der Dokumentation
         losses = sum(loss_dict[k] * weight_dict[k] for k in loss_dict.keys() if k in weight_dict)
         #print(losses)
+        #with torch.no_grad():
+        attention_map(outputs["attentions"])
 
         optimizer.zero_grad()
         losses.backward()
