@@ -42,14 +42,14 @@ def draw_stuff_on_image_and_save(img, points, degree_lines):
 
     # Convert the RGB image to BGR (OpenCV uses BGR)
     image_bgr = cv2.cvtColor(image_np, cv2.COLOR_RGBA2BGR)
+    return image_bgr
+    ## Display the image using OpenCV
+    #cv2.imshow('Image with Drawn Stuff', image_bgr)
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
 
-    # Display the image using OpenCV
-    cv2.imshow('Image with Drawn Stuff', image_bgr)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
-    # Save the image
-    plt.savefig('output.jpg')
+    ## Save the image
+    #plt.savefig('output.jpg')
 
 def get_degree_lines(points, degrees):
     degree_lines = []

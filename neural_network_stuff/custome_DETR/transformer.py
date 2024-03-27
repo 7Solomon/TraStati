@@ -54,9 +54,13 @@ class Transformer(nn.Module):
 
         tgt = torch.zeros_like(query_embed)
         memory = self.encoder(src, src_key_padding_mask=mask, pos=pos_embed)
-        hs = self.decoder(tgt, memory, memory_key_padding_mask=mask,
+        hs_d = self.decoder(tgt, memory, memory_key_padding_mask=mask,
                           pos=pos_embed, query_pos=query_embed)
-        return hs.transpose(1, 2), memory.permute(1, 2, 0).view(bs, c, h, w)
+        hs = hs_d['output']
+        attention = hs_d['attention']
+        return {'output': hs.transpose(1, 2), 
+                'memory': memory.permute(1, 2, 0).view(bs, c, h, w), 
+                'attention': attention}
 
 
 class TransformerEncoder(nn.Module):
@@ -109,19 +113,20 @@ class TransformerDecoder(nn.Module):
                            tgt_key_padding_mask=tgt_key_padding_mask,
                            memory_key_padding_mask=memory_key_padding_mask,
                            pos=pos, query_pos=query_pos)
+            attention = output['attention']
             if self.return_intermediate:
-                intermediate.append(self.norm(output))
+                intermediate.append(self.norm(output['tgt']))
 
         if self.norm is not None:
-            output = self.norm(output)
+            output = self.norm(output['tgt'])
             if self.return_intermediate:
                 intermediate.pop()
                 intermediate.append(output)
 
         if self.return_intermediate:
-            return torch.stack(intermediate)
+            return {'output': torch.stack(intermediate), 'attention': attention}
 
-        return output.unsqueeze(0)
+        return {'output': output.unsqueeze(0), 'attention': attention}
 
 
 class TransformerEncoderLayer(nn.Module):
@@ -230,7 +235,7 @@ class TransformerDecoderLayer(nn.Module):
         tgt2 = self.linear2(self.dropout(self.activation(self.linear1(tgt))))
         tgt = tgt + self.dropout3(tgt2)
         tgt = self.norm3(tgt)
-        return tgt
+        return {'tgt': tgt}
 
     def forward_pre(self, tgt, memory,
                     tgt_mask: Optional[Tensor] = None,
@@ -239,22 +244,46 @@ class TransformerDecoderLayer(nn.Module):
                     memory_key_padding_mask: Optional[Tensor] = None,
                     pos: Optional[Tensor] = None,
                     query_pos: Optional[Tensor] = None):
-        tgt2 = self.norm1(tgt)
+        
+        # Geht vielleicht besser, aber is okay
+        if isinstance(tgt, dict):
+            tgt2 = self.norm1(tgt['tgt'])
+            tgt = tgt['tgt']
+        else:
+            tgt2 = self.norm1(tgt)
+
+
         q = k = self.with_pos_embed(tgt2, query_pos)
-        tgt2 = self.self_attn(q, k, value=tgt2, attn_mask=tgt_mask,
-                              key_padding_mask=tgt_key_padding_mask)[0]
+        #tgt2 = self.self_attn(q, k, value=tgt2, attn_mask=tgt_mask,
+        #                      key_padding_mask=tgt_key_padding_mask)[0]
+        tgt2, attn_weights_self = self.self_attn(q, k, value=tgt2, attn_mask=tgt_mask,
+                                                  key_padding_mask=tgt_key_padding_mask)
+
+
         tgt = tgt + self.dropout1(tgt2)
         tgt2 = self.norm2(tgt)
-        tgt2 = self.multihead_attn(query=self.with_pos_embed(tgt2, query_pos),
-                                   key=self.with_pos_embed(memory, pos),
-                                   value=memory, attn_mask=memory_mask,
-                                   key_padding_mask=memory_key_padding_mask)[0]
+        
+        # Ohne attention
+        #tgt2 = self.multihead_attn(query=self.with_pos_embed(tgt2, query_pos),
+        #                           key=self.with_pos_embed(memory, pos),
+        #                           value=memory, attn_mask=memory_mask,
+        #                           key_padding_mask=memory_key_padding_mask)[0]
+        
+
+        tgt2, attn_weights_cross = self.multihead_attn(query=self.with_pos_embed(tgt, query_pos),
+                                                       key=self.with_pos_embed(memory, pos),
+                                                       value=memory, attn_mask=memory_mask,
+                                                       key_padding_mask=memory_key_padding_mask)
+        
+
+
         tgt = tgt + self.dropout2(tgt2)
         tgt2 = self.norm3(tgt)
         tgt2 = self.linear2(self.dropout(self.activation(self.linear1(tgt2))))
         tgt = tgt + self.dropout3(tgt2)
-        return tgt
 
+        return {'tgt': tgt, 'attention': (attn_weights_self, attn_weights_cross)
+}
     def forward(self, tgt, memory,
                 tgt_mask: Optional[Tensor] = None,
                 memory_mask: Optional[Tensor] = None,

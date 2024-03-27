@@ -24,18 +24,25 @@ def visualize_output(train_set, model_name, idx):
     samples = samples.to(device)
     
     output = model(samples)
-    attention_map(output["attentions"])
+
     
     points = [(e[0].item(),e[1].item()) for e in output['output_center_degree_points'][0]]
     degrees = [e[2].item() for e in output['output_center_degree_points'][0]]
-
+    print(points)
+    print(degrees)    
     points = [(int(840*x), int(960*y)) for x,y in points]
     degrees = [int(360/64*deg) for deg in degrees]
-    #print(f'points: {points}')
+
+    print(f'points: {points}')
+    print(f'degrees: {degrees}')
 
     degree_lines = get_degree_lines(points, degrees)
-    draw_stuff_on_image_and_save(image,points,degree_lines)
-
+    drawn_on_image = draw_stuff_on_image_and_save(image,points,degree_lines)
+    
+    # For Attention map und display der punkte
+    attention_map(output["attention_weights"], drawn_on_image)
+    
+    
     target = [{k: v.to(device) for k, v in item_label.items()}]   # [] für Batch
     loss = criterion(output, target)
     #print(points)

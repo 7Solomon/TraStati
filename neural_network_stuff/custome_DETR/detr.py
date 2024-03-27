@@ -38,29 +38,34 @@ class CustomeDetrModel(nn.Module):
                - samples.tensor: batched images, of shape [batch_size x 3 x H x W]
                - samples.mask: a binary mask of shape [batch_size x H x W], containing 1 on padded pixels
 
-            It returns a dict with the following elements:
-               - "pred_logits": the classification logits (including no-object) for all queries.
-                                Shape= [batch_size x num_queries x (num_classes + 1)]
-               - "pred_boxes": The normalized boxes coordinates for all queries, represented as
-                               (center_x, center_y, height, width). These values are normalized in [0, 1],
-                               relative to the size of each individual image (disregarding possible padding).
-                               See PostProcess for information on how to retrieve the unnormalized bounding box.
-               - "aux_outputs": Optional, only returned when auxilary losses are activated. It is a list of
-                                dictionnaries containing the two above keys for each decoder layer.
         """
         if isinstance(samples, (list, torch.Tensor)):
             samples = nested_tensor_from_tensor_list(samples)
+        
+        # Backbone and Position Stuff
         features, pos = self.backbone(samples)
+
 
         src, mask = features[-1].decompose()
         assert mask is not None
-        hs = self.transformer(self.input_proj(src), mask, self.query_embed.weight, pos[-1])[0]
+
+
+        hs_d = self.transformer(self.input_proj(src), mask, self.query_embed.weight, pos[-1])
+        hs = hs_d['output']
+        attention = hs_d['attention']
 
         output_center_degree_points = self.linear_data(hs)
         outputs_class = self.linear_class(hs).sigmoid()
 
+
+
+
+        attn_weights = []
+        for decoder_layer in self.transformer.decoder.layers:
+            attn_weights.append(attention)
+
         #degrees = [int(360/64*deg) for deg in degrees]
-        out = {'outputs_class': outputs_class[-1], 'output_center_degree_points': output_center_degree_points[-1]}
+        out = {'outputs_class': outputs_class[-1], 'output_center_degree_points': output_center_degree_points[-1], 'attention_weights': attn_weights}
         return out
 
 
@@ -140,22 +145,16 @@ class SetCriterion(nn.Module):
         ignore_condition = torch.tensor([[a != 0 for a in t['classes']] for t in targets])
         ignore_condition = ignore_condition.view(-1)
 
-        # Create a mask for positions to ignore
-        ignore_mask = (ignore_condition == 0)
+        # Create a mask for positions to ignore  ignore condition == not Ignore condition
+        not_ignore_ignore_mask = (ignore_condition != 0)
         # Compute L1 loss only for positions not to be ignored
         loss_cd = nn.functional.l1_loss(src_cds, target_cds, reduction='none')
-        loss_cd = loss_cd[ignore_mask]
-        #print(src_cds)
-        #print(target_cds)
-        #print(f'loss_cd: {loss_cd}')
+        #print(f'loss_cd: {len(loss_cd)}')
+        loss_cd = loss_cd[not_ignore_ignore_mask]
+        #print(f'loss_cd: {len(loss_cd)}')
 
         losses = {}
         losses['loss_cd'] = loss_cd.sum() / num_points
-        #print('------------DATA LOSS-----------------')
-        #print(f'Output: {src_cds}')
-        #print(f'Target: {target_cds}')
-        #print(f'Data_loss: {loss_cd.sum() / num_points}')
-#
         return losses
 
 
