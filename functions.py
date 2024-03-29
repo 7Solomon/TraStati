@@ -192,7 +192,7 @@ def train():
             train_net(model, criterion, train_set, val_set, num_epochs=int(num_eppochs), load_model=f'neural_network_stuff/models/{model_name}', save_as=f'neural_network_stuff/models/{model_name}')
         elif save == 'n':
             model_save_name = input('Wie willst du das neue Modell speichern?')
-            train_net(model, criterion, train_set, val_set, num_epochs=int(num_eppochs), load_model=f'neural_network_stuff/models/{model_name}', save_as=f'neural_network_stuff/models/{model_name}')
+            train_net(model, criterion, train_set, val_set, num_epochs=int(num_eppochs), load_model=f'neural_network_stuff/models/{model_name}', save_as=f'neural_network_stuff/models/{model_save_name}')
        
         else:
             print('Not Valid')

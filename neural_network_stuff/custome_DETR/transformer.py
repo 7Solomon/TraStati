@@ -307,7 +307,7 @@ def build_transformer():
         d_model=256,
         dropout=0.01,
         nhead=2,
-        dim_feedforward=1024,
+        dim_feedforward=512,
         num_encoder_layers=2,
         num_decoder_layers=2,
         normalize_before=True,

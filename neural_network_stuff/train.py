@@ -33,7 +33,7 @@ def train_net(model, criterion, training_set, val_set, num_epochs=120, load_mode
             "lr": 1e-5,
         },
     ]    
-    optimizer = torch.optim.AdamW(param_dicts,lr=1e-4,
+    optimizer = torch.optim.AdamW(param_dicts,lr=1e-5,
                                   weight_decay=1e-4)
 
 
@@ -102,13 +102,16 @@ def train_net(model, criterion, training_set, val_set, num_epochs=120, load_mode
         print(f"Epoch {epoch + 1}/{num_epochs}, Training Loss: {losses}")
         plot_train_los.append(losses)
         plot_val_los.append('Not Implementiert du kek')
+
+        # Das Falls getoötet wir es gesaved ist
+        torch.save(model.state_dict(), save_as)
     
     # Länge des Trainings
     end_time = time.time()
     print(f'Training finished after {end_time - start_time} seconds')
 
     # Saven des Models
-    torch.save(model.state_dict(), save_as)
+    
     return model.state_dict()
 
 
