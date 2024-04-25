@@ -72,11 +72,11 @@ def ask_for_dataset(new_create_bool: bool = False):
     for i, dataset in enumerate(datasets):
         print(f'{i}: {dataset}')
     if new_create_bool:
-        print(f'{len(datasets)+1}: Willst du ein neues Dataset?')
+        print(f'{len(datasets)}: Willst du ein neues Dataset?')
     print('----------------------------')
     idx_set = input('What datasets do you want? ')
     
-    if idx_set == str(len(datasets)+1) and new_create_bool:
+    if idx_set == str(len(datasets)) and new_create_bool:
         name = input('Welchen namen willst du für Datenset? ')
         create_datasets(name)
         return name
@@ -99,11 +99,11 @@ def ask_for_model(new_create_bool:  bool = False):
     for i, model in enumerate(models):
         print(f'{i}: {model}')
     if new_create_bool:
-        print(f'{len(models)+1}: Willst du ein neues Modell?')
+        print(f'{len(models)}: Willst du ein neues Modell?')
     print('-------------------------')
 
     idx_modell = input('Welches Modell willst du? ')
-    if idx_modell == str(len(models)+1) and new_create_bool:
+    if idx_modell == str(len(models)) and new_create_bool:
         model_name = input('Wie willst du das neue Modell nennen? ')
         return model_name
 
