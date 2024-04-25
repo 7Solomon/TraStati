@@ -3,6 +3,8 @@ import os
 from PIL import Image, UnidentifiedImageError
 import numpy as np
 
+import cv2
+
 import torch
 from torch.utils.data import Dataset
 from torchvision.io import read_image
@@ -108,7 +110,11 @@ class CustomImageDataset(Dataset):
         degree_lines = get_degree_lines(points, degrees)
 
         img_array = np.array(img)        
-        draw_stuff_on_image_and_save(img_array,points,degree_lines)
+        img = draw_stuff_on_image_and_save(img_array,points,degree_lines)
+
+        cv2.imshow(f'Image nr. {idx}', img)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
 
 

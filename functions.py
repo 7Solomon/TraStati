@@ -61,151 +61,135 @@ def endless_loop():
         print('---------')
     
 
+
+def ask_for_dataset(new_create_bool: bool = False):
+    if os.path.exists('data_folder/datasets/'):
+        datasets = list(set(["_".join(e.split('_')[:-1]) for e in os.listdir('data_folder/datasets/')]))
+    else:
+        os.mkdir('data_folder/datasets/')
+        datasets = list(set(["_".join(e.split('_')[:-1]) for e in os.listdir('data_folder/datasets/')]))
+    print('---------Datensätze---------')
+    for i, dataset in enumerate(datasets):
+        print(f'{i}: {dataset}')
+    if new_create_bool:
+        print(f'{len(datasets)+1}: Willst du ein neues Dataset?')
+    print('----------------------------')
+    idx_set = input('What datasets do you want? ')
+    
+    if idx_set == str(len(datasets)+1) and new_create_bool:
+        name = input('Welchen namen willst du für Datenset? ')
+        create_datasets(name)
+        return name
+    else:
+        # Schauen ob int
+        try:
+            idx_set = int(idx_set)
+            return datasets[idx_set]
+        except:
+            print('Du hast kein Int angegeben, oder er war auserhalb des Bereichs')
+            ask_for_dataset()
+
+def ask_for_model(new_create_bool:  bool = False):
+    if os.path.exists('neural_network_stuff/models/'):
+        models = os.listdir('neural_network_stuff/models/')
+    else:
+        os.mkdir('neural_network_stuff/models/')
+        models = os.listdir('neural_network_stuff/models/')
+    print('---------Modelle---------')
+    for i, model in enumerate(models):
+        print(f'{i}: {model}')
+    if new_create_bool:
+        print(f'{len(models)+1}: Willst du ein neues Modell?')
+    print('-------------------------')
+
+    idx_modell = input('Welches Modell willst du? ')
+    if idx_modell == str(len(models)+1) and new_create_bool:
+        model_name = input('Wie willst du das neue Modell nennen? ')
+        return model_name
+
+    else:
+        try:
+            idx_modell = int(idx_modell)
+            return models[idx_modell]
+        except:
+            print('Du hast kein Int angegeben, oder er war auserhalb des Bereichs')
+            ask_for_model()
     
 
 
 
 def look_trough_dataset():
-    datasets = list(set(["_".join(e.split('_')[:-1]) for e in os.listdir('data_folder/datasets/')]))
 
-    if len(datasets) != 0:        # Wenn es Datasets gibt
-        # Auflisten der Datensätze
-        for i, dataset in enumerate(datasets):
-            print(f'{i}: {dataset}')
-        print('---------')
-        idx_set = input('What datasets do you want? ')
-
-        dataset_name = datasets[int(idx_set)]
-        load_dataset_and_ask_for_idx(dataset_name)
-    else:
-        print('Keine Datasets vorhanden')
+    dataset_name = ask_for_dataset()
+    load_dataset_and_ask_for_idx(dataset_name)
+    
     
 
 def test_and_visualize_model():
-    models = os.listdir('neural_network_stuff/models/')
-    datasets =  list(set(["_".join(e.split('_')[:-1]) for e in os.listdir('data_folder/datasets/')]))
-    
-    # Auflisten der Datensätze
-    if len(datasets) != 0:                  # Wenn es Datasets gibt
-        for i, dataset in enumerate(datasets):
-            print(f'{i}: {dataset}')
-        print('---------')
-        idx_set = input('What datasets do you want? ')
-        dataset_name = datasets[int(idx_set)]
+    dataset_name = ask_for_dataset(new_create_bool=False)
+    model_name = ask_for_model(new_create_bool=False)
 
+    # Laden des Datensatzes
+    train_set, val_set = load_datasets(dataset_name)
+    print('---------')
+    print(f'Anzahl an Images:{train_set.__len__()}')
+ 
 
-        # Laden des Datensatzes
-        train_set, val_set = load_datasets(dataset_name)
-        print('---------')
-        print(f'Anzahl an Images:{train_set.__len__()}')
+    go_loop = True
+    while go_loop:
+        idx = input('Welches Bild willst du Checken? ')
 
-
-    else:
-        print('Keine Datenätze vorhanden')
-
-    
-    # Auflisten der Modelle
-    if len(models) != 0:
-        for i, model in enumerate(models):
-            print(f'{i}: {model}')
-        print('---------')
-        idx_modell = input('What model do you want? ')
-        model_name = models[int(idx_modell)]
-
-        go_loop = True
-        while go_loop:
-            idx = input('Welches Bild willst du Checken? ')
-
-            try :
-                idx = int(idx)
-            except:
-                print('thats not an int')
-
-            if type(idx) == int:
-                visualize_output(train_set, model_name, idx)
-            elif idx == 'cap' or idx == 'stop' or idx == 'halt':
+        try :
+            idx = int(idx)
+            visualize_output(train_set, model_name, idx)
+        except:
+            if idx == 'cap' or idx == 'stop' or idx == 'halt':
                 go_loop = False
             else:
-                print('Kein richtiger Command')
-                
-    else:
-        print('Keine Modelle vorhanden')
-        
-    
-    
+                print('thats not an int, und kein richtiger stop command')
 
 
-
-    
-
+                    
 
 def data():
-    datasets = [*list(set(["_".join(e.split('_')[:-1]) for e in os.listdir('data_folder/datasets/')])), 'Willst du ein neues Dataset?']
-
-    for i, dataset in enumerate(datasets):
-        print(f'{i}: {dataset}')
+    name = ask_for_dataset(new_create_bool=True)
     print('---------')
-    idx_set = input('Zu welchem willst adden?')
     try:
-        if int(idx_set) == len(datasets)-1:
-            name = input('Welchen namen willst du für Datenset? ')
-            create_datasets(name)
-        else:
-            name = datasets[int(idx_set)]
-
         num_img = int(input('Anzahl an Bildern pro Loop: '))
         num_loop = int(input('Anzahl an loops: '))
         print('Mit Randomized Systems')  
     except:
-        print ('Du hast kein Int angegeben')
+        print('Du hast kein Int angegeben')
+        return
+
     loop_iteration_for_datasets(name,num_loop,num_img,randomize=True)
 
     
 
 def train():
-    models = [*os.listdir('neural_network_stuff/models/'), 'Willst du ein neues generieren?']
-    datasets =  list(set(["_".join(e.split('_')[:-1]) for e in os.listdir('data_folder/datasets/')]))
-    
-    # Auflisten der Datensätze
-    if len(datasets) != 0:                  # Wenn es Datasets gibt
-        for i, dataset in enumerate(datasets):
-            print(f'{i}: {dataset}')
-        print('---------')
-        idx_set = input('What datasets do you want? ')
-        dataset_name = datasets[int(idx_set)]
+    dataset_name = ask_for_dataset(new_create_bool=False)
+    train_set, val_set = load_datasets(dataset_name)
 
-        # Laden des Datensatzes
-        train_set, val_set = load_datasets(dataset_name)
-    else:                              
-        print('Keine Datenätze vorhanden')
+
+    model_name = ask_for_model(new_create_bool=True)
+    print('---------')
+    try:
+        num_eppochs = int(input('Anzahl der Epochen? '))
+    except:
+        print('Du hast kein Int angegeben')
         return
 
-    # Auflisten der Modelle
-    for i, model in enumerate(models):
-        print(f'{i}: {model}')
-    print('---------')
-    idx_modell = input('What model do you want? ')
-    model_name = models[int(idx_modell)]
-
-    print('---------')
-    num_eppochs = input('Anzahl der Epochen? ')
-
-    
-    image_size = train_set.image_dic[train_set.id_list[0]].size
     model, criterion = build()
-    if idx_modell == str(len(models)-1):
+    train_net(model, criterion, train_set, val_set, num_epochs=int(num_eppochs), load_model=model_name, save_as=f'neural_network_stuff/models/{model_name}')
+    
+
+    save = input('Willst du das Modell Überschreiben? [Y/n]: ').strip().lower() or 'y'
+    if save == 'y':
+        train_net(model, criterion, train_set, val_set, num_epochs=int(num_eppochs), load_model=f'neural_network_stuff/models/{model_name}', save_as=f'neural_network_stuff/models/{model_name}')
+    elif save == 'n':
         model_save_name = input('Wie willst du das neue Modell speichern?')
-        train_net(model, criterion, train_set, val_set, num_epochs=int(num_eppochs), load_model=None, save_as=f'neural_network_stuff/models/{model_name}')
-    else:
-        save = input('Willst du das Modell Überschreiben? [Y/n]: ').strip().lower() or 'y'
-        if save == 'y':
-            train_net(model, criterion, train_set, val_set, num_epochs=int(num_eppochs), load_model=f'neural_network_stuff/models/{model_name}', save_as=f'neural_network_stuff/models/{model_name}')
-        elif save == 'n':
-            model_save_name = input('Wie willst du das neue Modell speichern?')
-            train_net(model, criterion, train_set, val_set, num_epochs=int(num_eppochs), load_model=f'neural_network_stuff/models/{model_name}', save_as=f'neural_network_stuff/models/{model_save_name}')
+        train_net(model, criterion, train_set, val_set, num_epochs=int(num_eppochs), load_model=f'neural_network_stuff/models/{model_name}', save_as=f'neural_network_stuff/models/{model_save_name}')
        
-        else:
-            print('Not Valid')
 
 
     

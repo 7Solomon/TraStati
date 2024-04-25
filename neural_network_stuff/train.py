@@ -1,6 +1,7 @@
 import math, sys
 import time
 
+import os
 import torch
 from torchvision import transforms
 from torch.utils.data import DataLoader
@@ -12,7 +13,7 @@ from neural_network_stuff.custome_DETR import misc_stuff
 
 
 
-def train_net(model, criterion, training_set, val_set, num_epochs=120, load_model='neural_network_stuff/models/v_1.pth', save_as='default'):
+def train_net(model, criterion, training_set, val_set, num_epochs: int=120, load_model: str = None, save_as: str='default'):
     #training_set= CustomImageDataset('data_folder/test_dataloader/train/label.txt','data_folder/test_dataloader/train')
     #val_set = CustomImageDataset('data_folder/test_dataloader/val/label.txt','data_folder/test_dataloader/val')
     batch_size = 6
@@ -40,8 +41,11 @@ def train_net(model, criterion, training_set, val_set, num_epochs=120, load_mode
     # For plotting und so
     plot_train_los, plot_val_los = [], []
 
-    if load_model != None:
+    # Load model
+    if load_model != None and os.path.exists(load_model):
         model.load_state_dict(torch.load(load_model))
+    else:
+        print('Model wird nicht geladen, da entweder nicht angegeben oder nicht vorhanden')
     
     sampler_train = torch.utils.data.RandomSampler(training_set)
     sampler_val = torch.utils.data.SequentialSampler(val_set)

@@ -44,19 +44,19 @@ def load_dataset_and_ask_for_idx(name):
     while repeat_q:
         idx = input('Idx: ')
 
-        try :
-            idx = int(idx)
-        except:
-            print('thats not an int')
-
-        if type(idx) == int:
-            t.display_data(int(idx))
-        elif idx == 'cap' or idx == 'stop' or idx == 'du ehrenloser':
+        
+        if idx == 'cap' or idx == 'stop' or idx == 'du ehrenloser':
             repeat_q = False
         else:
-            #print('thats not an int')
-            continue
-        
+            try :
+                idx = int(idx)
+            except:
+                print('thats not an int')
+                continue
+            t.display_data(idx)
+                
+            
+            
         
 
 
