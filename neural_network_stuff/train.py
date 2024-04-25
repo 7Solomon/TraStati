@@ -68,9 +68,7 @@ def train_net(model, criterion, training_set, val_set, num_epochs=120, load_mode
             outputs = model(samples)
         
             loss_dict = criterion(outputs, targets)   # Loss data
-            
             weight_dict = criterion.weight_dict         # Von der Dokumentation
-
             losses = sum(loss_dict[k] * weight_dict[k] for k in loss_dict.keys() if k in weight_dict)
 
 

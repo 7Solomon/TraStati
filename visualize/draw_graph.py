@@ -21,32 +21,24 @@ def init_hash_map(path):
 
 
 def draw_stuff_on_image_and_save(img, points, degree_lines):
-    # Create a figure and axis
-    fig, ax = plt.subplots()
-    ax.imshow(img)
-    ax.axis('off')
-    point_color = (1, 0, 0)
-    line_color = (0, 0, 1) 
-    
+    point_color = (255, 0, 0)
+    line_color = (0, 0, 255) 
+
     for point in points:
-        
-        ax.scatter(point[0], point[1], color=point_color)
+        cv2.circle(img, point, radius=5, color=point_color, thickness=-1)
+
 
     for line in degree_lines:
-        #print(line)
-        #print([line[0][0], line[1][0]], [line[0][1], line[1][1]])
-        ax.plot([line[0][0], line[1][0]], [line[0][1], line[1][1]], color=line_color)
-    # Show the plot
-    fig.canvas.draw()
-    image_np = np.array(fig.canvas.renderer.buffer_rgba())
+        cv2.line(img, line[0], line[1], line_color, 2)
 
     # Convert the RGB image to BGR (OpenCV uses BGR)
-    image_bgr = cv2.cvtColor(image_np, cv2.COLOR_RGBA2BGR)
-    return image_bgr
-    ## Display the image using OpenCV
-    #cv2.imshow('Image with Drawn Stuff', image_bgr)
+    img = cv2.cvtColor(img, cv2.COLOR_RGBA2BGR)
+    
+    #cv2.imshow('Image with Drawn Stuff', img)
     #cv2.waitKey(0)
     #cv2.destroyAllWindows()
+    return img
+    ## Display the image using OpenCV
 
     ## Save the image
     #plt.savefig('output.jpg')

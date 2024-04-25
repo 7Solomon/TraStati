@@ -80,6 +80,7 @@ def look_trough_dataset():
     else:
         print('Keine Datasets vorhanden')
     
+
 def test_and_visualize_model():
     models = os.listdir('neural_network_stuff/models/')
     datasets =  list(set(["_".join(e.split('_')[:-1]) for e in os.listdir('data_folder/datasets/')]))
@@ -114,10 +115,19 @@ def test_and_visualize_model():
         go_loop = True
         while go_loop:
             idx = input('Welches Bild willst du Checken? ')
-            if idx == 'cap' or idx == 'stop' or idx == 'halt':
+
+            try :
+                idx = int(idx)
+            except:
+                print('thats not an int')
+
+            if type(idx) == int:
+                visualize_output(train_set, model_name, idx)
+            elif idx == 'cap' or idx == 'stop' or idx == 'halt':
                 go_loop = False
             else:
-                visualize_output(train_set, model_name, idx)
+                print('Kein richtiger Command')
+                
     else:
         print('Keine Modelle vorhanden')
         

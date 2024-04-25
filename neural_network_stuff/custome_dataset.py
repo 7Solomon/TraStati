@@ -1,6 +1,7 @@
 import ast
 import os
 from PIL import Image, UnidentifiedImageError
+import numpy as np
 
 import torch
 from torch.utils.data import Dataset
@@ -15,6 +16,11 @@ transform = transforms.Compose([
         transforms.Resize((840, 960)),  # Ändert die Größe des Bildes
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),  # Normalisiert die Pixelwerte
     ])
+
+transform_reverse = transforms.Compose([
+    transforms.Normalize(mean=[-0.485/0.229, -0.456/0.224, -0.406/0.225], std=[1/0.229, 1/0.224, 1/0.225]),
+    transforms.Resize((840, 960)),
+])
 
 
 def target_transform(label):
@@ -76,7 +82,6 @@ class CustomImageDataset(Dataset):
         self.get_images(new_images_to_add,path)   
 
         
-
     def __len__(self):
         return len(self.id_list)
 
@@ -101,7 +106,9 @@ class CustomImageDataset(Dataset):
 
         points,degrees = get_points_from_label(self.label_dic[id])
         degree_lines = get_degree_lines(points, degrees)
-        draw_stuff_on_image_and_save(img,points,degree_lines)
+
+        img_array = np.array(img)        
+        draw_stuff_on_image_and_save(img_array,points,degree_lines)
 
 
 
