@@ -144,12 +144,13 @@ def test_and_visualize_model():
 
         try :
             idx = int(idx)
-            visualize_output(train_set, model_name, idx)
         except:
             if idx == 'cap' or idx == 'stop' or idx == 'halt':
                 go_loop = False
             else:
                 print('thats not an int, und kein richtiger stop command')
+            continue
+        visualize_output(train_set, model_name, idx)
 
 
                     

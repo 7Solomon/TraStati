@@ -2,7 +2,16 @@ import cv2
 import numpy as np
 
 def draw_cachel(heatmaps):
+    width, height = heatmaps[0].shape[:2]
+    # BruteForce for 4
+    top = np.hstack(heatmaps[:2])
+    bot = np.hstack(heatmaps[2:])
 
+    display_heatmaps = np.vstack([top,bot])
+    return cv2.resize(display_heatmaps, (height, width))
+
+
+    """ 
     length = len(heatmaps)
     if length%2 == 0:
         top = np.hstack(heatmaps[length//2:])
@@ -15,10 +24,12 @@ def draw_cachel(heatmaps):
     else:
         top = np.hstack(heatmaps[:length//2])
         bot = np.hstack(heatmaps[length//2:])
+    
 
         display_heatmaps = np.vstack([top,bot,heatmaps[-1]])
         display_heatmaps = cv2.resize(display_heatmaps, heatmaps[0].shape[:2])
         return display_heatmaps
+    """
 
 def attention_map(attention_weights, original_image):
 
