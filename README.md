@@ -12,22 +12,22 @@ python main --data
 
 <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
   <div style="width: 200px; margin-right: 10px;">
-    <img src="assets/cut_image.jpg" alt="Cut Image" style="width: 100%;">
+    <img src="assets/cut_image.jpg" alt="Cut Image" style="width: 200px;">
     <p>Cut the Image - Als erstes wird das Image auf eine feste Größe zugeschnitten.</p>
   </div>
   
   <div style="width: 200px; margin-right: 10px;">
-    <img src="assets/rotated_image.jpg" alt="Rotated Image" style="width: 100%;">
+    <img src="assets/rotated_image.jpg" alt="Rotated Image" style="width: 200px;">
     <p>Rotate the Image - Danach wird das Image zufällig rotiert.</p>
   </div>
   
   <div style="width: 200px; margin-right: 10px;">
-    <img src="assets/noised_image.jpg" alt="Noised Image" style="width: 100%;">
+    <img src="assets/noised_image.jpg" alt="Noised Image" style="width: 200px;">
     <p>Noise the Image - Zum Schluss wird das Image per Trapezform randomisiert und die weißen Pixel werden in eine papierähnliche Farbe geräuschbehaftet.</p>
   </div>
   
   <div style="width: 200px;">
-    <img src="assets/output_image.jpg" alt="Output Image" style="width: 100%;">
+    <img src="assets/output_image.jpg" alt="Output Image" style="width: 200px;">
     <p>Label of the Image - Hier sieht man die Ground Truths der Images.</p>
   </div>
 </div>
