@@ -10,26 +10,17 @@ Generierung und erkennung statischer Systeme mittels Transformer
 python main --data
 ```
 
-<div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
-  <div style="width: 200px; margin-right: 10px;">
-    <img src="assets/cut_image.jpg" alt="Cut Image" style="width: 200px;">
-    <p style="word-wrap: break-word;">Cut the Image - Als erstes wird das Image auf eine feste Größe zugeschnitten.</p>
-  </div>
-  
-  <div style="width: 200px; margin-right: 10px;">
-    <img src="assets/rotated_image.jpg" alt="Rotated Image" style="width: 200px;">
-    <p style="word-wrap: break-word;">Rotate the Image - Danach wird das Image zufällig rotiert.</p>
-  </div>
-  
-  <div style="width: 200px; margin-right: 10px;">
-    <img src="assets/noised_image.jpg" alt="Noised Image" style="width: 200px;">
-    <p style="word-wrap: break-word;">Noise the Image - Zum Schluss wird das Image per Trapezform randomisiert und die weißen Pixel werden in eine papierähnliche Farbe geräuschbehaftet.</p>
-  </div>
-  
-  <div style="width: 200px;">
-    <img src="assets/output_image.jpg" alt="Output Image" style="width: 200px;">
-    <p style="word-wrap: break-word;">Label of the Image - Hier sieht man die Ground Truths der Images.</p>
-  </div>
+<div>
+    <img src="assets/cut_image.jpg" width="200" alt="Cut Image">
+    <img src="assets/rotated_image.jpg" width="200" alt="Rotated Image"> 
+    <img src="assets/noised_image.jpg" width="200" alt="Noised Image">
+    <img src="assets/output_image.jpg" width="200" alt="Output Image">
+
+    <p>Cut the Image <b> Als erstes wird das Image auf eine fest größe Zugeschnitten </p>
+    <p>Rotate the Image - Danach wird das Image random Rotiert</p>
+    <p>Noise the Image - Zum schluss wird das Image per Trapez Form randomized und die weißen Pixel werden zu einer Papier ähnlichen Farbe genoised</p>
+    <p>Label of the Image - Hier sieht man die ground Truths der Images</p>
+
 </div>
 
 ### Visualisierung eines Datasets
