@@ -28,8 +28,8 @@ python main --data
 python main --display
 ```
 
-Label of the Image - Hier sieht man die ground Truths der Images
 <img src="assets/output_image.jpg" width="200" alt="Output Image">
+Label of the Image - Hier sieht man die ground Truths der Images
 
 ### Visualisierung des outputs eines Models
 
@@ -49,11 +49,11 @@ python main --train
 pip install -r requirements.txt
 ```
 
-Da die Daten mit "pdflatex" mit python subprocess generiert werden, müssen pdflatex, convert installiert sein.
-
 ## Other dependencies
 
-### Linux (Debian)
+Da die Daten mit "pdflatex" mit python subprocess generiert werden, müssen pdflatex, convert installiert sein.
+
+#### Linux (Debian)
 
 ```console
 $ sudo apt install texlive
