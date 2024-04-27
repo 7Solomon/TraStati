@@ -4,7 +4,7 @@ import argparse, os
 from neural_network_stuff.custome_DETR.detr import build
 from neural_network_stuff.train import train_net
 from data_folder.create_data_folder import create_valTrain_folder
-from data_folder.manage_datasets import loop_iteration_for_datasets, create_datasets, load_datasets, add_to_datasets
+from data_folder.manage_datasets import loop_iteration_for_datasets, create_datasets, load_datasets, add_to_datasets, clear_label_files
 from visualize.visualize_dataset import load_dataset_and_ask_for_idx
 from visualize.visualize_output import visualize_output
 
@@ -78,6 +78,9 @@ def ask_for_dataset(new_create_bool: bool = False):
     
     if idx_set == str(len(datasets)) and new_create_bool:
         name = input('Welchen namen willst du für Datenset? ')
+        
+        # Experimanetal BE carefull, maybe not good this is
+        clear_label_files()
         create_datasets(name)
         return name
     else:

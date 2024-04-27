@@ -41,6 +41,11 @@ def add_to_datasets(d_1,d_2):
     d_1.merge_dataset(d_2)   
     return d_1 
 
+def clear_label_files():
+    with open('data_folder/test_dataloader/train/label.txt','w') as label_file:
+        label_file.write('')
+    with open('data_folder/test_dataloader/val/label.txt','w') as label_file:
+        label_file.write('')
 
 
 
