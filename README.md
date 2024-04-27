@@ -10,9 +10,9 @@ Generierung und erkennung statischer Systeme mittels Transformer
 python main --data
 ```
 
-![Cutt](assets/cut_image.jpg)
-![Rotated](assets/rotated_inage.jpg)
-![Noissed](assets/noised_image.jpg)
+<img src="assets/cut_image.jpg" width="200" height="200">
+<img src="assets/rotated_inage.jpg" width="200" height="200">
+<img src="assets/noised_image.jpg" width="200" height="200">
 
 ### Visualisierung eines Datasets
 
