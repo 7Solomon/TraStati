@@ -36,7 +36,7 @@ pip install -r requirements.txt
 
 Da die Daten mit "pdflatex" mit python subprocess generiert werden, müssen pdflatex, convert installiert sein.
 
-## other Dependencies
+## Other dependencies
 
 ### Linux (Debian)
 
