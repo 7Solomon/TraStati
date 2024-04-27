@@ -11,10 +11,14 @@ python main --data
 ```
 
 <div>
-  <img src="assets/cut_image.jpg" width="200" alt="Cut Image">
-  <img src="assets/rotated_image.jpg" width="200" alt="Rotated Image">
-  <img src="assets/noised_image.jpg" width="200" alt="Noised Image">
-  <img src="assets/output_image.jpg" width="200" alt="Output Image">
+    <img src="assets/cut_image.jpg" width="200" alt="Cut Image">
+    <p>Cut the Image - Als erstes wird das Image auf eine fest größe Zugeschnitten</p>
+    <img src="assets/rotated_image.jpg" width="200" alt="Rotated Image">
+    <p>Rotate the Image - Danach wird das Image random Rotiert</p>
+    <img src="assets/noised_image.jpg" width="200" alt="Noised Image">
+    <p>Noise the Image - Zum schluss wird das Image per Trapez Form randomized und die weißen Pixel werden zu einer Papier ähnlichen Farbe genoised</p>
+    <img src="assets/output_image.jpg" width="200" alt="Output Image">
+    <p>Label of the Image - Hier sieht man die ground Truths der Images</p>
 </div>
 
 ### Visualisierung eines Datasets
