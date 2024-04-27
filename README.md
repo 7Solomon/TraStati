@@ -16,11 +16,11 @@ python main --data
     <img src="assets/noised_image.jpg" width="200" alt="Noised Image">
     <img src="assets/output_image.jpg" width="200" alt="Output Image">
 
-    <p>Cut the Image <b> Als erstes wird das Image auf eine fest größe Zugeschnitten </p>
-    <p>Rotate the Image - Danach wird das Image random Rotiert</p>
-    <p>Noise the Image - Zum schluss wird das Image per Trapez Form randomized und die weißen Pixel werden zu einer Papier ähnlichen Farbe genoised</p>
-    <p>Label of the Image - Hier sieht man die ground Truths der Images</p>
+</div>
 
+<div style="max-width: 300px;">
+  <img src="assets/noised_image.jpg" alt="Image Description" style="max-width: 100%; height: auto;">
+  <p style="max-width: 100%; overflow-wrap: break-word;">Description of the image. This text will wrap to the next line if it exceeds the width of the image.</p>
 </div>
 
 ### Visualisierung eines Datasets
