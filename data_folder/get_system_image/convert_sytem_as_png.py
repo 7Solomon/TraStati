@@ -15,10 +15,14 @@ def convertSystem(id,randomize=False, output_folder='data_folder/get_system_imag
     subprocess.run(['convert', '-density', '300', 'data.pdf', '-quality', '90', output_path])
 
     # Optional: Aufräumen, entferne temporäre Dateien
-    os.remove('data.tex')
-    os.remove('data.aux')
-    os.remove('data.log')
-    os.remove('data.pdf')
+    if os.path.exists('data.tex'):
+      os.remove('data.tex')
+    if os.path.exists('data.aux'):
+      os.remove('data.aux')
+    if os.path.exists('data.log'):
+      os.remove('data.log')
+    if os.path.exists('data.pdf'):
+      os.remove('data.pdf')
 
     write_label_file(label_list, id, output_folder)    
 
