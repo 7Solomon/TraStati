@@ -112,6 +112,9 @@ class CustomImageDataset(Dataset):
         img_array = np.array(img)        
         img = draw_stuff_on_image_and_save(img_array,points,degree_lines)
 
+        # To save to file
+        #cv2.imwrite('assets/test_output_image.jpg', img)
+
         cv2.imshow(f'Image nr. {idx}', img)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
