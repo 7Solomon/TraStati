@@ -11,14 +11,22 @@ python main --data
 ```
 
 <div>
-    <img src="assets/cut_image.jpg" width="200" alt="Cut Image">
-    <p style="word-wrap: break-word;">Cut the Image - Als erstes wird das Image auf eine fest größe Zugeschnitten</p>
-    <img src="assets/rotated_image.jpg" width="200" alt="Rotated Image">
-    <p style="word-wrap: break-word;">Rotate the Image - Danach wird das Image random Rotiert</p>
-    <img src="assets/noised_image.jpg" width="200" alt="Noised Image">
-    <p style="word-wrap: break-word;">Noise the Image - Zum schluss wird das Image per Trapez Form randomized und die weißen Pixel werden zu einer Papier ähnlichen Farbe genoised</p>
-    <img src="assets/output_image.jpg" width="200" alt="Output Image">
-    <p style="word-wrap: break-word;">Label of the Image - Hier sieht man die ground Truths der Images</p>
+    <div style="height: 300px; border: 1px solid black;">
+        <img src="assets/cut_image.jpg" height="200" alt="Cut Image">
+        <p style="word-wrap: break-word;">Cut the Image - Als erstes wird das Image auf eine fest größe Zugeschnitten</p>
+    </div>
+    <div style="height: 300px; border: 1px solid black;">
+        <img src="assets/rotated_image.jpg" height="200" alt="Rotated Image">
+        <p style="word-wrap: break-word;">Rotate the Image - Danach wird das Image random Rotiert</p>
+    </div>
+    <div style="height: 300px; border: 1px solid black;">
+        <img src="assets/noised_image.jpg" height="200" alt="Noised Image">
+        <p style="word-wrap: break-word;">Noise the Image - Zum schluss wird das Image per Trapez Form randomized und die weißen Pixel werden zu einer Papier ähnlichen Farbe genoised</p>
+    </div>
+    <div style="height: 300px; border: 1px solid black;">
+        <img src="assets/output_image.jpg" height="200" alt="Output Image">
+        <p style="word-wrap: break-word;">Label of the Image - Hier sieht man die ground Truths der Images</p>
+    </div>
 </div>
 
 ### Visualisierung eines Datasets
