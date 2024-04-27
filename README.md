@@ -19,7 +19,7 @@ python main --data
 </div>
 
 <div style="max-width: 300px;">
-  <img src="assets/noised_image.jpg" alt="Image Description" style="max-width: 100%; height: auto;">
+  <img src="assets/noised_image.jpg" alt="Image Description" style="max-width: 200px; height: auto;">
   <p style="max-width: 100%; overflow-wrap: break-word;">Description of the image. This text will wrap to the next line if it exceeds the width of the image.</p>
 </div>
 
