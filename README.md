@@ -45,6 +45,8 @@ python main --train
 
 # Installation
 
+Alle pip dependencies können hiermit installiert werden.
+
 ```python
 pip install -r requirements.txt
 ```
