@@ -77,8 +77,15 @@ um ImageMick zu installieren.
 
 Da mit custome LaTex librarys gearbeitet wird, muss der path zu dem data_folder configuriert werden.
 
-Dies geht mit:
+#### Linux
+
+Dies geht auf Linux mit:
 
 ```python
 python start_up.py
 ```
+
+### Windows
+
+Bei Windows muss ausprobiert werden ob das auch funktioniert, oder welche Fehler ausgegeben werden.
+Es muss aufjedenfall "data_folder/get_system_image" als Library Path für LaTex angegeben werde.
