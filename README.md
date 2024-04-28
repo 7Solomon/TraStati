@@ -58,9 +58,9 @@ Da die Daten mit "pdflatex" mit python subprocess generiert werden, müssen "pdf
 #### Linux (Debian)
 
 ```console
-$ sudo apt-get install texlive
-$ sudo apt-get install imagemagick
-$ sudo apt-get install texlive-pictures
+sudo apt-get install texlive
+sudo apt-get install imagemagick
+sudo apt-get install texlive-pictures
 
 ```
 
