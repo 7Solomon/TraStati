@@ -61,8 +61,12 @@ Da die Daten mit "pdflatex" mit python subprocess generiert werden, müssen "pdf
 sudo apt-get install texlive
 sudo apt-get install imagemagick
 sudo apt-get install texlive-pictures
-
 ```
+
+#### Windows ("Theoretische Installation", da noch nicht ausprobiert)
+
+[TexLive, TexLive Pictures](https://www.tug.org/texlive/windows.html)
+[ImageMagick](https://imagemagick.org/script/download.php#windows)
 
 ## path configuration
 

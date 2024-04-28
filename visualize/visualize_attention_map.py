@@ -53,6 +53,7 @@ def attention_map(attention_weights, original_image):
     
     display_heatmaps = draw_cachel(heatmaps)
     
+    #cv2.imwrite('heatmap.jpg', display_heatmaps)
 
     cv2.imshow('Attention Stuff', display_heatmaps)
     cv2.waitKey(0)
