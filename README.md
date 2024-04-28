@@ -66,7 +66,7 @@ $ sudo apt-get install texlive-pictures
 
 ## path configuration
 
-Da mit custome LaTex librarys gearbeitet wird, muss der path zu dem data_folder coonfiguriert werden.
+Da mit custome LaTex librarys gearbeitet wird, muss der path zu dem data_folder configuriert werden.
 
 Dies geht mit:
 
