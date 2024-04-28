@@ -88,4 +88,4 @@ python start_up.py
 ### Windows
 
 Bei Windows muss ausprobiert werden ob das auch funktioniert, oder welche Fehler ausgegeben werden.
-Es muss aufjedenfall "data_folder/get_system_image" als Library Path für LaTex angegeben werde.
+Es muss aufjedenfall "data_folder/get_system_image" als Library Path für LaTex angegeben werden.
