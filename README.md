@@ -66,7 +66,7 @@ sudo apt-get install texlive-pictures
 #### Windows ("Theoretische Installation", da noch nicht ausprobiert)
 
 Folge den Anweisungen auf
-[TexLive, TexLive Pictures](https://www.tug.org/texlive/windows.html)
+[TexLive](https://www.tug.org/texlive/windows.html)
 um TexLive und TexLive-Pictures zu installieren.
 
 Folge den Anweisungen auf
