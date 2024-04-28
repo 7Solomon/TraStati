@@ -51,12 +51,23 @@ pip install -r requirements.txt
 
 ## Other dependencies
 
-Da die Daten mit "pdflatex" mit python subprocess generiert werden, müssen pdflatex, convert installiert sein.
+Da die Daten mit "pdflatex" mit python subprocess generiert werden, müssen "pdflatex", "convert" und "texlive-pictures" installiert sein.
 
 #### Linux (Debian)
 
 ```console
 $ sudo apt install texlive
 $ sudo apt install imagemagick
+$ sudo apt-get install texlive-pictures
 
+```
+
+## path configuration
+
+Da mit custome LaTex librarys gearbeitet wird, muss der path zu dem data_folder coonfiguriert werden.
+
+Dies geht mit:
+
+```python
+python start_up.py
 ```

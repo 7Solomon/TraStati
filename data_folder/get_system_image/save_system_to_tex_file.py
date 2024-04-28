@@ -130,7 +130,7 @@ def connect_lager(connector_list, lager_liste, positionABCMap_passed):
 
 def getSystemAndSave(randomize=False):
     global data
-    open("data.tex", "w").close()
+    open("data_folder/get_system_image/data.tex", "w").close()
     data += '\\batchmode'
     data += '\\documentclass[12pt,letterpaper]{article}'
     data += '\n'
@@ -163,7 +163,7 @@ def getSystemAndSave(randomize=False):
     data += '\\end{document}'
     data += '\n'
 
-    f = open("data.tex", "w")
+    f = open("data_folder/get_system_image/data.tex", "w")
 
     f.write(data)
     f.close()
