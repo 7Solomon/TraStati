@@ -46,6 +46,9 @@ def update_policy_file(policy_file_path):
                     line = line.replace('<policy domain="coder" rights="none" pattern="PDF" />',
                                     '<policy domain="coder" rights="read | write" pattern="PDF" />')
                 file.write(line)
+        print('-----------')
+        print("The policy file has been updated.")
+        print('-----------')
     except PermissionError as e:
         print('-----------')
         print(e)
