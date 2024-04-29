@@ -45,8 +45,8 @@ def visualize_output(train_set, model_name, idx):
     points = [(int(840*x), int(960*y)) for x,y in points]
     degrees = [int(360/64*deg) for deg in degrees]
 
-    print(f'points: {points}')
-    print(f'degrees: {degrees}')
+    #print(f'points: {points}')
+    #print(f'degrees: {degrees}')
 
     # Zeichnen der Punkte und Winkel
     degree_lines = get_degree_lines(points, degrees)

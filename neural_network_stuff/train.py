@@ -8,6 +8,8 @@ from torch.utils.data import DataLoader
 
 #import matplotlib.pyplot as plt
 from neural_network_stuff.custome_dataset import CustomImageDataset
+from visualize.visualize_loss import generate_loss_plot
+from visualize.visualize_image import visualize_image
 
 from neural_network_stuff.custome_DETR import misc_stuff
 
@@ -39,7 +41,7 @@ def train_net(model, criterion, training_set, val_set, num_epochs: int=120, load
 
 
     # For plotting und so
-    plot_train_los, plot_val_los = [], []
+    plot_train_loss = []
 
     # Load model
     if load_model != None and os.path.exists(load_model):
@@ -99,11 +101,13 @@ def train_net(model, criterion, training_set, val_set, num_epochs: int=120, load
                 torch.nn.utils.clip_grad_norm_(model.parameters(), clip_max_norm)
             optimizer.step()
 
+            # Save the loss for plotting
+            plot_train_loss.append(losses.item())
+
 
         
         print(f"Epoch {epoch + 1}/{num_epochs}, Training Loss: {losses}")
-        plot_train_los.append(losses)
-        plot_val_los.append('Not Implementiert du kek')
+        
 
         # Das Falls getoötet wir es gesaved ist
         torch.save(model.state_dict(), save_as)
@@ -112,8 +116,9 @@ def train_net(model, criterion, training_set, val_set, num_epochs: int=120, load
     end_time = time.time()
     print(f'Training finished after {end_time - start_time} seconds')
 
-    # Saven des Models
-    
+    # Plotting
+    loss_plot_image = generate_loss_plot(plot_train_loss)
+    visualize_image(loss_plot_image, 'loss_plot')
     return model.state_dict()
 
 
