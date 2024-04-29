@@ -40,7 +40,7 @@ python main --test
 ##### Output und Heatmaps
 
 <img src="assets/heatmap_1.jpg" width="300" alt="Heatmap">
-Model with einem Loss von 1.19
+**Model with einem Loss von 1.19**
 
 Die Predictions folgen keinem Muster, auch die Heatmap sieht sehr random aus.
 Auch wieso jeder 2. Head keine Attention hat ist mir noch ein Rätsel.
