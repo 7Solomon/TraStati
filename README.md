@@ -52,11 +52,11 @@ Auch wieso jeder 2. Head keine Attention hat ist mir noch ein Rätsel.
 python main --train
 ```
 
-<img src="assets/loss_plot_1.jpg" width="300" alt="Loss Plot">
-Das ist der loss Plot nach 5 Epochen mit 109 Batches mit jeweils 6 Images.
-Wie man sieht springt der Loss sehr.
+Der Verlauf der Lossentwicklung nach 5 Epochen mit 109 Batches mit jeweils 6 Images:
 
-Der Loss nach weiter 5 Epochen:
+<img src="assets/loss_plot_1.jpg" width="300" alt="Loss Plot">
+
+Der Loss des selben model nach weiteren 5 Epochen:
 
 <img src="assets/loss_plot_2.jpg" width="300" alt="Loss Plot">
 
