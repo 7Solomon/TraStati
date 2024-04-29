@@ -14,7 +14,6 @@ funcsigs==1.0.2
 future==0.18.3
 huggingface-hub==0.20.1
 idna==3.6
-ipython==8.24.0
 jedi==0.19.1
 Jinja2==3.1.2
 kiwisolver==1.4.5

@@ -5,7 +5,6 @@ import cv2
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from PIL import Image
-from IPython.display import display
 
 
 
@@ -24,7 +23,5 @@ def visualize_image(image, title="Image", save_path=None):
     elif configure.display_mode == "pil":
         img = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
         img.show()
-    elif configure.display_mode == "ipy":
-        print("Funktioniert noch nicht!!!")
-        img = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-        display(img)
+    else:
+        raise ValueError("Invalid display mode. Please choose 'cv2', 'plt' or 'pil'.")
