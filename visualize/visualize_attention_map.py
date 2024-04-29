@@ -3,6 +3,9 @@ import numpy as np
 
 from visualize.visualize_image import visualize_image
 
+import configure
+
+
 def draw_cachel(heatmaps):
     width, height = heatmaps[0].shape[:2]
     # BruteForce for 4
@@ -55,7 +58,10 @@ def attention_map(attention_weights, original_image):
     
     display_heatmaps = draw_cachel(heatmaps)
     
-    #cv2.imwrite('heatmap.jpg', display_heatmaps)
-
-    visualize_image(display_heatmaps, "Attention Map")
+    # Save the heatmap if configured
+    save_path = None
+    if configure.save_heatmap:
+        visualize_image(display_heatmaps, "Attention Map", save_path='assets/heatmap.jpg')
+    else:
+        visualize_image(display_heatmaps, "Attention Map")
     

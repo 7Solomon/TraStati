@@ -13,6 +13,8 @@ from visualize.visualize_image import visualize_image
 
 from neural_network_stuff.custome_DETR import misc_stuff
 
+import configure
+
 
 
 def train_net(model, criterion, training_set, val_set, num_epochs: int=120, load_model: str = None, save_as: str='default'):
@@ -118,7 +120,13 @@ def train_net(model, criterion, training_set, val_set, num_epochs: int=120, load
 
     # Plotting
     loss_plot_image = generate_loss_plot(plot_train_loss)
-    visualize_image(loss_plot_image, 'loss_plot')
+
+    # Save the loss plot if configured
+    if configure.save_loss_plot:
+        visualize_image(loss_plot_image, 'loss_plot', save_path='assets/loss_plot.jpg')
+    else:
+        visualize_image(loss_plot_image, 'loss_plot')
+        
     return model.state_dict()
 
 

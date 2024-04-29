@@ -60,12 +60,12 @@ def ask_for_model(new_create_bool:  bool = False):
     idx_modell = input('Welches Modell willst du? ')
     if idx_modell == str(len(models)) and new_create_bool:
         model_name = input('Wie willst du das neue Modell nennen? ')
-        return model_name
+        return model_name, True
 
     else:
         try:
             idx_modell = int(idx_modell)
-            return models[idx_modell]
+            return models[idx_modell], False
         except:
             print('Du hast kein Int angegeben, oder er war auserhalb des Bereichs')
             ask_for_model()
@@ -82,7 +82,7 @@ def look_trough_dataset():
 
 def test_and_visualize_model():
     dataset_name = ask_for_dataset(new_create_bool=False)
-    model_name = ask_for_model(new_create_bool=False)
+    model_name, did_create_new_model = ask_for_model(new_create_bool=False)
 
     # Laden des Datensatzes
     train_set, val_set = load_datasets(dataset_name)
@@ -127,7 +127,7 @@ def train():
     train_set, val_set = load_datasets(dataset_name)
 
 
-    model_name = ask_for_model(new_create_bool=True)
+    model_name, did_create_new_model = ask_for_model(new_create_bool=True)
     print('---------')
     try:
         num_eppochs = int(input('Anzahl der Epochen? '))
@@ -136,16 +136,17 @@ def train():
         return
 
     model, criterion = build()
-    train_net(model, criterion, train_set, val_set, num_epochs=int(num_eppochs), load_model=model_name, save_as=f'neural_network_stuff/models/{model_name}')
-    
 
-    save = input('Willst du das Modell Überschreiben? [Y/n]: ').strip().lower() or 'y'
-    if save == 'y':
-        train_net(model, criterion, train_set, val_set, num_epochs=int(num_eppochs), load_model=f'neural_network_stuff/models/{model_name}', save_as=f'neural_network_stuff/models/{model_name}')
-    elif save == 'n':
-        model_save_name = input('Wie willst du das neue Modell speichern?')
-        train_net(model, criterion, train_set, val_set, num_epochs=int(num_eppochs), load_model=f'neural_network_stuff/models/{model_name}', save_as=f'neural_network_stuff/models/{model_save_name}')
-       
+    if not did_create_new_model:
+        save = input('Willst du das Modell Überschreiben? [Y/n]: ').strip().lower() or 'y'
+        if save == 'y':
+            train_net(model, criterion, train_set, val_set, num_epochs=int(num_eppochs), load_model=f'neural_network_stuff/models/{model_name}', save_as=f'neural_network_stuff/models/{model_name}')
+        elif save == 'n':
+            model_save_name = input('Wie willst du das neue Modell speichern?')
+            train_net(model, criterion, train_set, val_set, num_epochs=int(num_eppochs), load_model=f'neural_network_stuff/models/{model_name}', save_as=f'neural_network_stuff/models/{model_save_name}')
+    else:
+        # Falls ein neues Modell erstellt wurde
+        train_net(model, criterion, train_set, val_set, num_epochs=int(num_eppochs), save_as=f'neural_network_stuff/models/{model_name}')
 
 if __name__ == "__main__":
     print('Du bist in der falschen Datei')

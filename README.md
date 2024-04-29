@@ -37,11 +37,18 @@ Label of the Image - Hier sieht man die ground Truths der Images
 python main --test
 ```
 
+<img src="assets/heatmap_1.jpg" width="150" alt="Heatmap">
+Das ist der Output und die Heatmap von einem Model mit einem Loss von 1.19
+
 ### Trainieren eines Models
 
 ```python
 python main --train
 ```
+
+<img src="assets/loss_plot_1.jpg" width="300" alt="Loss Plot">
+Das ist der loss Plot nach 5 Epochen mit 109 Batches mit jeweils 6 Images.
+Wie man sieht springt der Loss sehr.
 
 # Installation
 
@@ -90,7 +97,7 @@ python start_up.py
 Bei Windows muss ausprobiert werden ob das auch funktioniert, oder welche Fehler ausgegeben werden.
 Es muss aufjedenfall "data_folder/get_system_image" als Library Path für LaTex angegeben werden.
 
-#### Google Colab
+## Google Colab
 
 Hier ist ein Google Collab link, dort kann man einfach den anwesiúngen folgen und die Repository mal ausprobieren.
 
