@@ -109,6 +109,6 @@ Es muss aufjedenfall "data_folder/get_system_image" als Library Path für LaTex 
 
 ## Google Colab
 
-Hier ist ein Google Collab link, dort kann man einfach den anwesiúngen folgen und die Repository mal ausprobieren.
+Hier ist ein Google Collab link, dort kann man einfach den anwesiungen folgen und die Repository mal ausprobieren.
 
 [TraStati Starthilfe](https://colab.research.google.com/drive/1uBNAzD4KOvp-wpPS1W5qIAhtLJrI14kr?usp=sharing)
