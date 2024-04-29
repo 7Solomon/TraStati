@@ -57,6 +57,7 @@ Das ist der loss Plot nach 5 Epochen mit 109 Batches mit jeweils 6 Images.
 Wie man sieht springt der Loss sehr.
 
 Der Loss nach weiter 5 Epochen:
+
 <img src="assets/loss_plot_2.jpg" width="300" alt="Loss Plot">
 
 # Installation
