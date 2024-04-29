@@ -39,8 +39,8 @@ python main --test
 
 ##### Output und Heatmaps
 
-<img src="assets/heatmap_1.jpg" width="300" alt="Heatmap">
 Loss von 1.19:
+<img src="assets/heatmap_1.jpg" width="300" alt="Heatmap">
 
 Die Predictions folgen keinem Muster, auch die Heatmap sieht sehr random aus.
 Auch wieso jeder 2. Head keine Attention hat ist mir noch ein Rätsel.
