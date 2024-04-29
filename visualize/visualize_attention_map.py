@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
 
+from visualize.visualize_image import visualize_image
+
 def draw_cachel(heatmaps):
     width, height = heatmaps[0].shape[:2]
     # BruteForce for 4
@@ -55,6 +57,5 @@ def attention_map(attention_weights, original_image):
     
     #cv2.imwrite('heatmap.jpg', display_heatmaps)
 
-    cv2.imshow('Attention Stuff', display_heatmaps)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    visualize_image(display_heatmaps, "Attention Map")
+    

@@ -12,6 +12,7 @@ import torchvision.transforms as transforms
 
 from torch.utils.data import DataLoader
 from visualize.draw_graph import get_degree_lines, draw_stuff_on_image_and_save, get_points_from_label
+from visualize.visualize_image import visualize_image
 
 transform = transforms.Compose([
         transforms.ToTensor(),  # Konvertiert das Bild in einen Tensor
@@ -115,9 +116,7 @@ class CustomImageDataset(Dataset):
         # To save to file
         #cv2.imwrite('assets/test_output_image.jpg', img)
 
-        cv2.imshow(f'Image nr. {idx}', img)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        visualize_image(img, f'Image nr. {idx}')
 
 
 
