@@ -60,6 +60,8 @@ Der Loss des selben model nach weiteren 5 Epochen:
 
 <img src="assets/loss_plot_2.jpg" width="300" alt="Loss Plot">
 
+Wie man sieht spring der Loss sehr und Konvergiert auf keinen Fall gut, da jedoch der Loss am anfangt sinkt gehe ich davon aus, dass etwas an meiner Kostenfunktion falsch ist.
+
 # Installation
 
 Alle pip dependencies können hiermit installiert werden.
