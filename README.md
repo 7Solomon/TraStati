@@ -40,6 +40,7 @@ python main --test
 ##### Output und Heatmaps
 
 Loss von 1.19:
+
 <img src="assets/heatmap_1.jpg" width="300" alt="Heatmap">
 
 Die Predictions folgen keinem Muster, auch die Heatmap sieht sehr random aus.
