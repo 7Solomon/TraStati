@@ -37,9 +37,10 @@ Label of the Image - Hier sieht man die ground Truths der Images
 python main --test
 ```
 
-##### Output und die Heatmap eines Model mit einem Loss von 1.19:
+##### Output und Heatmaps
 
 <img src="assets/heatmap_1.jpg" width="300" alt="Heatmap">
+Model with einem Loss von 1.19
 
 Die Predictions folgen keinem Muster, auch die Heatmap sieht sehr random aus.
 Auch wieso jeder 2. Head keine Attention hat ist mir noch ein Rätsel.
