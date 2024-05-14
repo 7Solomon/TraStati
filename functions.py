@@ -16,10 +16,11 @@ def create_folders():
 
 def ask_for_dataset(new_create_bool: bool = False):
     if os.path.exists('data_folder/datasets/'):
-        datasets = list(set(["_".join(e.split('_')[:-1]) for e in os.listdir('data_folder/datasets/')]))
+        datasets = os.listdir('data_folder/datasets/')
+    
     else:
         os.mkdir('data_folder/datasets/')
-        datasets = list(set(["_".join(e.split('_')[:-1]) for e in os.listdir('data_folder/datasets/')]))
+        datasets = os.listdir('data_folder/datasets/')
     print('---------Datensätze---------')
     for i, dataset in enumerate(datasets):
         print(f'{i}: {dataset}')

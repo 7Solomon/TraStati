@@ -1,7 +1,6 @@
 # "plt"
 # "cv2"
 # "pil"
-# "ipy"
 
 # Display Mode
 display_mode = "cv2"

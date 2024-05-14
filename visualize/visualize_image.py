@@ -23,5 +23,7 @@ def visualize_image(image, title="Image", save_path=None):
     elif configure.display_mode == "pil":
         img = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
         img.show()
+    elif configure.display_mode == "goco":
+        cv2. imshow(title, image)
     else:
         raise ValueError("Invalid display mode. Please choose 'cv2', 'plt' or 'pil'.")
