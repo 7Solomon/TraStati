@@ -9,11 +9,11 @@ import configure
 def draw_cachel(heatmaps):
     width, height = heatmaps[0].shape[:2]
     # BruteForce for 4
-    top = np.hstack(heatmaps[:2])
-    bot = np.hstack(heatmaps[2:])
+    top = np.hstack(heatmaps)
+    #bot = np.hstack(heatmaps[2:])
 
-    display_heatmaps = np.vstack([top,bot])
-    return cv2.resize(display_heatmaps, (height, width))
+    display_heatmaps = np.vstack([top])
+    return cv2.resize(display_heatmaps, (2*height, width))
 
 
     """ 

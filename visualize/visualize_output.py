@@ -41,12 +41,14 @@ def visualize_output(train_set, model_name, idx):
     # Punkte und Winkel des Outputs
     points = [(e[0].item(),e[1].item()) for e in output['output_center_degree_points'][0]]
     degrees = [e[2].item() for e in output['output_center_degree_points'][0]]
- 
+    
     points = [(int(840*x), int(960*y)) for x,y in points]
     degrees = [int(360/64*deg) for deg in degrees]
 
-    #print(f'points: {points}')
-    #print(f'degrees: {degrees}')
+
+
+    print(f'points: {points}')
+    print(f'degrees: {degrees}')
 
     # Zeichnen der Punkte und Winkel
     degree_lines = get_degree_lines(points, degrees)
@@ -57,4 +59,14 @@ def visualize_output(train_set, model_name, idx):
     
     target = [{k: v.to(device) for k, v in item_label.items()}]   # [] für Batch
     loss = criterion(output, target)
+    print('----------------------')
+    print('--------output--------')
+    print('----------------------')
+    print(output['outputs_class'])
+    print(target[0]['classes']) 
+    print('----------------------')
+    print(output['output_center_degree_points'])
+    print(target[0]['data'])
+    print('----------------------')
+    
     print(f'loss: {loss}')

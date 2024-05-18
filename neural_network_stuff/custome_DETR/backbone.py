@@ -11,6 +11,8 @@ from neural_network_stuff.custome_DETR.misc_stuff import NestedTensor, is_main_p
 from neural_network_stuff.custome_DETR.pos_encoding import build_position_encoding
 
 
+import configure
+
 class FrozenBatchNorm2d(torch.nn.Module):
     """
     BatchNorm2d where the batch statistics and the affine parameters are fixed.
@@ -80,10 +82,14 @@ class Backbone(BackboneBase):
     def __init__(self, name: str,
                  train_backbone: bool,
                  return_interm_layers: bool,
-                 dilation: bool):
+                 dilation: bool, use_frozen_bn: bool = True):
+        if use_frozen_bn:
+            norm_layer = FrozenBatchNorm2d
+        else:
+            norm_layer = nn.BatchNorm2d
         backbone = getattr(torchvision.models, name)(
             replace_stride_with_dilation=[False, False, dilation],
-            pretrained=is_main_process(), norm_layer=FrozenBatchNorm2d)
+            pretrained=is_main_process(), norm_layer=norm_layer)
         num_channels = 512 if name in ('resnet18', 'resnet34') else 2048
         super().__init__(backbone, train_backbone, num_channels, return_interm_layers)
 
@@ -105,11 +111,13 @@ class Joiner(nn.Sequential):
     
 def build_backbone():
     position_embedding = build_position_encoding()
-    train_backbone = 1e-7 #args.lr_backbone > 0    Learning rate for the backbone
+    train_backbone = configure.lr_backbone #args.lr_backbone > 0    Learning rate for the backbone
     return_interm_layers = True #args.masks
-    
+    use_frozen_bn = configure.use_frozen_bn
+
+
     # Define das Backbone
-    backbone = Backbone('resnet50', train_backbone, return_interm_layers, True) # True for dilation, kann sicher gut sein 
+    backbone = Backbone('resnet50', train_backbone, return_interm_layers, True, use_frozen_bn=use_frozen_bn) # True for dilation, kann sicher gut sein 
     model = Joiner(backbone, position_embedding)
     model.num_channels = backbone.num_channels
     return model

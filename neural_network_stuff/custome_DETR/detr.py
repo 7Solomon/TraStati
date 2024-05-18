@@ -9,6 +9,8 @@ from neural_network_stuff.custome_DETR.matcher import build_matcher
 
 from neural_network_stuff.custome_DETR.misc_stuff import NestedTensor, get_world_size, is_dist_avail_and_initialized, nested_tensor_from_tensor_list, accuracy, interpolate 
 
+import configure
+
 #from .segmentation import (DETRsegm, PostProcessPanoptic, PostProcessSegm,
 #                           dice_loss, sigmoid_focal_loss)
 
@@ -34,11 +36,8 @@ class CustomeDetrModel(nn.Module):
 
 
     def forward(self, samples: NestedTensor):
-        """ The forward expects a NestedTensor, which consists of:
-               - samples.tensor: batched images, of shape [batch_size x 3 x H x W]
-               - samples.mask: a binary mask of shape [batch_size x H x W], containing 1 on padded pixels
 
-        """
+        # 
         if isinstance(samples, (list, torch.Tensor)):
             samples = nested_tensor_from_tensor_list(samples)
         
@@ -59,10 +58,10 @@ class CustomeDetrModel(nn.Module):
 
 
 
-
+        
         attn_weights = []
-        for decoder_layer in self.transformer.decoder.layers:
-            attn_weights.append(attention)
+        for attention_stuff in attention:
+            attn_weights.append(attention_stuff)
 
         #degrees = [int(360/64*deg) for deg in degrees]
         out = {'outputs_class': outputs_class[-1], 'output_center_degree_points': output_center_degree_points[-1], 'attention_weights': attn_weights}
@@ -243,12 +242,12 @@ class SetCriterion(nn.Module):
 def build():
 
     # Args stuff
-    cD_loss_coef = 5
-    giou_loss_coef = 2
-    eos_coef = 0.1
+    cD_loss_coef = configure.cD_loss_coef
+    giou_loss_coef = configure.giou_loss_coef
+    eos_coef = configure.eos_coef
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     
-    num_classes = 5
+    num_classes = configure.num_classes
     device = torch.device(device)
 
     model = CustomeDetrModel(

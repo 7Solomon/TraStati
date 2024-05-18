@@ -14,6 +14,8 @@ import torch
 import torch.nn.functional as F
 from torch import nn, Tensor
 
+import configure
+
 
 class Transformer(nn.Module):
 
@@ -304,14 +306,14 @@ def _get_clones(module, N):
 
 def build_transformer():
     return Transformer(
-        d_model=256,
-        dropout=0.01,
-        nhead=2,
-        dim_feedforward=512,
-        num_encoder_layers=2,
-        num_decoder_layers=2,
-        normalize_before=True,
-        return_intermediate_dec=True
+        d_model=configure.d_model,
+        dropout=configure.dropout,
+        nhead=configure.nhead,
+        dim_feedforward=configure.dim_feedforward,
+        num_encoder_layers=configure.num_encoder_layers,
+        num_decoder_layers=configure.num_decoder_layers,
+        normalize_before=configure.normalize_before,
+        return_intermediate_dec=configure.return_intermediate_dec
     )
 
 

@@ -6,6 +6,8 @@ import torch
 from scipy.optimize import linear_sum_assignment
 from torch import nn
 
+import configure
+
 #from util.box_ops import box_cxcywh_to_xyxy, generalized_box_iou
 
 
@@ -62,4 +64,4 @@ class HungarianMatcher(nn.Module):
 
 
 def build_matcher():
-    return HungarianMatcher(cost_class=1, cost_cD=5)
+    return HungarianMatcher(cost_class=configure.cost_class, cost_cD=configure.cost_cD)
