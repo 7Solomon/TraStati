@@ -1,6 +1,7 @@
 import torch
 
-import argparse, os
+
+import argparse, os, shutil
 from neural_network_stuff.custome_DETR.detr import build
 from neural_network_stuff.train import train_net
 from data_folder.create_data_folder import create_valTrain_folder
@@ -8,6 +9,8 @@ from data_folder.manage_datasets import loop_iteration_for_datasets, create_data
 from visualize.visualize_dataset import load_dataset_and_ask_for_idx
 from visualize.visualize_output import visualize_output
 
+
+import configure
 
 def create_folders():
     create_valTrain_folder('data_folder/test_dataloader')    # Random und n können hier rein
@@ -110,6 +113,14 @@ def test_and_visualize_model():
 
 def data():
     name = ask_for_dataset(new_create_bool=True)
+    
+    
+    overwrite = input('Willst du das Datenset kopieren und anders speichern? [y/N]: ').strip().lower()
+    if overwrite or overwrite == 'y':
+        new_name = input('Wie soll das neue Datenset heißen? ')
+        shutil.copytree(f'data_folder/datasets/{name}', f'data_folder/datasets/{new_name}')
+        name = new_name
+
     print('---------')
     try:
         num_img = int(input('Anzahl an Bildern pro Loop: '))
@@ -148,6 +159,10 @@ def train():
     else:
         # Falls ein neues Modell erstellt wurde
         train_net(model, criterion, train_set, val_set, num_epochs=int(num_eppochs), save_as=f'neural_network_stuff/models/{model_name}')
+
+def change_lr(lr_backbone: float, lr_transformer: float):
+    configure.lr_backbone = lr_backbone
+
 
 if __name__ == "__main__":
     print('Du bist in der falschen Datei')

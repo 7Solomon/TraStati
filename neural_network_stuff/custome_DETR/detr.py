@@ -37,7 +37,7 @@ class CustomeDetrModel(nn.Module):
 
     def forward(self, samples: NestedTensor):
 
-        # 
+        
         if isinstance(samples, (list, torch.Tensor)):
             samples = nested_tensor_from_tensor_list(samples)
         
@@ -57,8 +57,7 @@ class CustomeDetrModel(nn.Module):
         outputs_class = self.linear_class(hs).sigmoid()
 
 
-
-        
+        # Das ist noch ganz quatschig, muss umbedingt besser gemacht werden!!
         attn_weights = []
         for attention_stuff in attention:
             attn_weights.append(attention_stuff)
@@ -103,34 +102,28 @@ class SetCriterion(nn.Module):
         self.register_buffer('empty_weight', empty_weight)
 
     def loss_labels(self, outputs, targets, indices, num_points, log=True):
-        """Classification loss (NLL)
-        targets dicts must contain the key "labels" containing a tensor of dim [nb_target_boxes]
-        """
+
         
         assert 'outputs_class' in outputs, 'no define gusto outputo what are you doing little man'
         src_logits = outputs['outputs_class']
+
 
         idx = self._get_src_permutation_idx(indices)
         target_classes_o = torch.cat([t["classes"][J] for t, (_, J) in zip(targets, indices)])
         target_classes = torch.full(src_logits.shape[:2], self.num_classes,
                                     dtype=torch.int64, device=src_logits.device)
         target_classes[idx] = target_classes_o
-
-        #print(src_logits.shape,target_classes.shape)
+        print(outputs)
+        print(target_classes)
+        
         loss_ce = nn.functional.cross_entropy(src_logits.transpose(1, 2), target_classes, self.empty_weight, ignore_index=0)
         losses = {'loss_ce': loss_ce}
 
-        #print(src_logits)
-        #print(target_classes)
-        #print(f'loss_cd: {loss_ce}')
 
-        #print('------------Class LOSS-----------------')
-        #print(f'Output: {src_logits}')
-        #print(f'Target: {target_classes_o}')
-        #print(f'Data_loss: {loss_ce}')
         if log:
             # TODO this should probably be a separate loss, not hacked in this one here
             losses['class_error'] = 100 - accuracy(src_logits[idx], target_classes_o)[0]
+        
         return losses
     
 

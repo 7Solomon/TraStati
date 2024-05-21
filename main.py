@@ -1,5 +1,6 @@
 import argparse
 from functions import train, data, look_trough_dataset, test_and_visualize_model
+from experimental_functions import endless_loop
 
 #functions = {'data':data,
 #             'display':look_trough_dataset,
@@ -12,6 +13,7 @@ def parse_arguments():
     parser.add_argument('--data', action='store_true', help='Bro KA')
     parser.add_argument('--display', action='store_true', help='Bro KA')
     parser.add_argument('--test', action='store_true', help='Bro KA')
+    parser.add_argument('--loop', action='store_true', help='Bro KA')
     return parser.parse_args()
 
 
@@ -20,13 +22,15 @@ def main():
     args = parse_arguments()
     if args.data:
         data()
-    if args.train:
+    elif args.train:
         train()
-    if args.display:
+    elif args.display:
         look_trough_dataset()
-    if args.test:
+    elif args.test:
         test_and_visualize_model()
-    if not args.data and not args.train and not args.display and not args.test:
+    elif args.loop:
+        endless_loop()
+    else:
         print('No Argument')
     
 if __name__ == '__main__':

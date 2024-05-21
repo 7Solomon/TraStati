@@ -116,8 +116,10 @@ class TransformerDecoder(nn.Module):
                            memory_key_padding_mask=memory_key_padding_mask,
                            pos=pos, query_pos=query_pos)
             attention = output['attention']
+
             if self.return_intermediate:
                 intermediate.append(self.norm(output['tgt']))
+
 
         if self.norm is not None:
             output = self.norm(output['tgt'])
@@ -125,9 +127,17 @@ class TransformerDecoder(nn.Module):
                 intermediate.pop()
                 intermediate.append(output)
 
+        
+        
+        #if torch.any(output['output'].argmax().item() == 0):  # Modify the condition as per your output representation
+        #    found_object = True
+        
+        print(intermediate)
+        print(intermediate[0].shape)
+
         if self.return_intermediate:
             return {'output': torch.stack(intermediate), 'attention': attention}
-
+        
         return {'output': output.unsqueeze(0), 'attention': attention}
 
 
