@@ -60,7 +60,15 @@ Der Loss des selben model nach weiteren 5 Epochen:
 
 <img src="assets/loss_plot_2.jpg" width="300" alt="Loss Plot">
 
-Wie man sieht springt der Loss sehr und Konvergiert auf keinen Fall gut, da jedoch der Loss am anfangt sinkt gehe ich davon aus, dass etwas an meiner Kostenfunktion falsch ist.
+Wie man sieht springt der Loss sehr und Konvergiert auf keinen Fall gut.
+
+Mögliche Verbesserungen:
+
+- Verändern der Kostenfunktionen.
+- Erhöhung der Anzahl an Heads, Encoder/ Decoder layer, sowie Erhöhung der dim.
+(Braucht mehr Leistung, als gerade verfügbar)
+- Anpassen der Hyperparameter.
+
 
 # Installation
 
