@@ -65,7 +65,7 @@ Wie man sieht springt der Loss sehr und Konvergiert auf keinen Fall gut.
 Mögliche Verbesserungen:
 
 - Verändern der Kostenfunktionen.
-- Erhöhung der Anzahl an Heads, Encoder/ Decoder layer, sowie Erhöhung der dim.
+- Erhöhung der Anzahl an Heads, Encoder/ Decoder layer, sowie Erhöhung der hidden_dim.
 (Braucht mehr Leistung, als gerade verfügbar)
 - Anpassen der Hyperparameter.
 
