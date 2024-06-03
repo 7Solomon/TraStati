@@ -2,7 +2,7 @@ import torch
 
 
 import argparse, os, shutil
-from neural_network_stuff.custome_DETR.detr import build
+from neural_network_stuff.custome_CNN.cnn import build
 from neural_network_stuff.train import train_net
 from data_folder.create_data_folder import create_valTrain_folder
 from data_folder.manage_datasets import loop_iteration_for_datasets, create_datasets, load_datasets, add_to_datasets, clear_label_files
@@ -160,7 +160,7 @@ def train():
         # Falls ein neues Modell erstellt wurde
         train_net(model, criterion, train_set, val_set, num_epochs=int(num_eppochs), save_as=f'neural_network_stuff/models/{model_name}')
 
-def change_lr(lr_backbone: float, lr_transformer: float):
+def change_lr(lr_backbone: float, ):
     configure.lr_backbone = lr_backbone
 
 

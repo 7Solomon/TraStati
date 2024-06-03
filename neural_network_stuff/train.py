@@ -6,21 +6,16 @@ import torch
 from torchvision import transforms
 from torch.utils.data import DataLoader
 
-#import matplotlib.pyplot as plt
-from neural_network_stuff.custome_dataset import CustomImageDataset
 from visualize.visualize_loss import generate_loss_plot
 from visualize.visualize_image import visualize_image
 
-from neural_network_stuff.custome_DETR import misc_stuff
 
 import configure
 
 
 
 def train_net(model, criterion, training_set, val_set, num_epochs: int=120, load_model: str = None, save_as: str='default'):
-    #training_set= CustomImageDataset('data_folder/test_dataloader/train/label.txt','data_folder/test_dataloader/train')
-    #val_set = CustomImageDataset('data_folder/test_dataloader/val/label.txt','data_folder/test_dataloader/val')
-    batch_size = 6
+    batch_size = configure.batch_size
     num_workers = 2   
     clip_max_norm = 0.1
 
@@ -74,29 +69,16 @@ def train_net(model, criterion, training_set, val_set, num_epochs: int=120, load
             samples = samples.to(device)
             targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
             outputs = model(samples)
-        
+
+            # Berechnung der Loses
             loss_dict = criterion(outputs, targets)   # Loss data
             weight_dict = criterion.weight_dict         # Von der Dokumentation
             losses = sum(loss_dict[k] * weight_dict[k] for k in loss_dict.keys() if k in weight_dict)
 
 
-            # reduce losses over all GPUs for logging purposes    Glaube brauch ich nicht aber ka 
-            #loss_dict_reduced = misc_stuff.reduce_dict(loss_dict)
-            #loss_dict_reduced_unscaled = {f'{k}_unscaled': v
-            #                            for k, v in loss_dict_reduced.items()}
-            #loss_dict_reduced_scaled = {k: v * weight_dict[k]
-            #                            for k, v in loss_dict_reduced.items() if k in weight_dict}
-            #losses_reduced_scaled = sum(loss_dict_reduced_scaled.values())
-            #loss_value = losses_reduced_scaled.item()
-            
             print(f'Loss: {losses}, image[{i}]  in epoch {epoch}/{num_epochs}')
 
-
-            #if not math.isfinite(loss_value):
-            #    print("Loss is {}, stopping training".format(loss_value))
-            #    print(loss_dict_reduced)
-            #    sys.exit(1)
-
+            # Backpropogation
             optimizer.zero_grad()
             losses.backward()
             if clip_max_norm > 0:

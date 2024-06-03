@@ -1,6 +1,3 @@
-
-
-
 # Display Mode
 display_mode = "cv2"
 
@@ -8,8 +5,6 @@ display_mode = "cv2"
 # Save Options
 save_heatmap = True
 save_loss_plot = True
-
-
 
 
 ### Learning STUFF
@@ -32,9 +27,14 @@ cost_cD=5
 # Transformer
 d_model=256
 dropout=0.2
-nhead=4
+nhead=2
 dim_feedforward=512
-num_encoder_layers=6
-num_decoder_layers=6
+num_encoder_layers=3
+num_decoder_layers=3
 normalize_before=True
 return_intermediate_dec=True
+
+
+# CNN
+num_queries = 10
+batch_size = 6

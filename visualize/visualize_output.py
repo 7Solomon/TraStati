@@ -5,10 +5,10 @@ import numpy as np
 from torchvision import transforms
 
 from data_folder.manage_datasets import load_datasets
-from neural_network_stuff.custome_DETR.misc_stuff import nested_tensor_from_tensor_list
+from neural_network_stuff.custome_CNN.misc_stuff import nested_tensor_from_tensor_list
 from visualize.draw_graph import draw_stuff_on_image_and_save, get_degree_lines
 from visualize.visualize_attention_map import attention_map
-from neural_network_stuff.custome_DETR.detr import build
+from neural_network_stuff.custome_CNN.detr import build
 
 transform_reverse = transforms.Compose([
     transforms.Normalize(mean=[-0.485/0.229, -0.456/0.224, -0.406/0.225], std=[1/0.229, 1/0.224, 1/0.225]),
