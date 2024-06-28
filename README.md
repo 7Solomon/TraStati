@@ -90,7 +90,7 @@ sudo apt-get install imagemagick
 sudo apt-get install texlive-pictures
 ```
 
-#### Windows ("Theoretische Installation", da noch nicht ausprobiert)
+#### Windows ("Theoretische Installation", da noch nicht ausführlich getesetet)
 
 Folge den Anweisungen auf
 [TexLive](https://www.tug.org/texlive/windows.html)
@@ -99,6 +99,10 @@ um TexLive und TexLive-Pictures zu installieren.
 Folge den Anweisungen auf
 [ImageMagick](https://imagemagick.org/script/download.php#windows)
 um ImageMick zu installieren.
+
+Ich hatte bei der installierung auf Windows probleme mit ein paar python packages und unkompatiblen python versions.
+Dies muss noch tiefer ausprobiert werden.
+
 
 ## path configuration
 
