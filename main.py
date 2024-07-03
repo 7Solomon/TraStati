@@ -23,15 +23,15 @@ def main():
     args = parse_arguments()
     if args.data:
         data()
-    if args.train:
+    elif args.train:
         train()
-    if args.display:
+    elif args.display:
         look_trough_dataset()
-    if args.test:
+    elif args.test:
         test_and_visualize_model()
-    if args.debug:
+    elif args.debug:
         test()
-    if not args.data and not args.train and not args.display and not args.test:
+    else:
         print('No Argument')
     
 if __name__ == '__main__':

@@ -38,27 +38,41 @@ def check_for_black_pixel_at_border(img_part: np.ndarray, origin: tuple):
     margin = configure.black_pixel_margin
     black_threshold = np.array([margin, margin, margin])
 
+    
+    centered_black_pixel_cords = []
     # Top border
     for x in range(img_part.shape[1]):
         if np.all(img_part[0, x] <= black_threshold):
             black_pixels_coords.append((origin_x + x, origin_y))
 
+    centered_black_pixel_cords.extend(get_middle_of_black_point_border(black_pixels_coords))
+    black_pixels_coords = []
+
     # Bottom border
     for x in range(img_part.shape[1]):
         if np.all(img_part[-1, x] <= black_threshold):
             black_pixels_coords.append((origin_x + x, origin_y + img_part.shape[0] - 1))
+    
+    centered_black_pixel_cords.extend(get_middle_of_black_point_border(black_pixels_coords))
+    black_pixels_coords = []
 
     # Left border
     for y in range(img_part.shape[0]):
         if np.all(img_part[y, 0] <= black_threshold):
             black_pixels_coords.append((origin_x, origin_y + y))
+    
+    centered_black_pixel_cords.extend(get_middle_of_black_point_border(black_pixels_coords))
+    black_pixels_coords = []
 
     # Right border
     for y in range(img_part.shape[0]):
         if np.all(img_part[y, -1] <= black_threshold):
             black_pixels_coords.append((origin_x + img_part.shape[1] - 1, origin_y + y))
+    
+    centered_black_pixel_cords.extend(get_middle_of_black_point_border(black_pixels_coords))
+    black_pixels_coords = []
 
-    return black_pixels_coords
+    return centered_black_pixel_cords
 
 def bresenham_line(x0, y0, x1, y1):
     """Returns the list of points in the line from (x0, y0) to (x1, y1) using Bresenham's algorithm.
@@ -108,12 +122,12 @@ def check_line_for_black_points(image, x0, y0, x1, y1):
         # Check if the pixel is within image boundaries
         if 0 <= x < image.shape[1] and 0 <= y < image.shape[0]:
             pixel_value = image[y, x]
-            print(f"Checking pixel at ({x}, {y}) with value {pixel_value} against threshold {black_threshold}")
+            #print(f"Checking pixel at ({x}, {y}) with value {pixel_value} against threshold {black_threshold}")
             if not np.all(pixel_value <= black_threshold):
-                print(f"Pixel at ({x}, {y}) is not black: {pixel_value}")
+                #print(f"Pixel at ({x}, {y}) is not black: {pixel_value}")
                 return False
         else:
-            print(f"Pixel at ({x}, {y}) is out of image bounds")
+            #print(f"Pixel at ({x}, {y}) is out of image bounds")
             return False
     return True
 
@@ -138,15 +152,49 @@ def points_near_line(point_list, x0, y0, x1, y1, threshold_distance):
             near_points.append((x, y))
     return near_points
 
-# Example usage:
-line_start = (100, 100)
-line_end = (300, 300)
-threshold_distance = 10
-point_list = [(120, 110), (200, 200), (310, 310), (280, 290)]
+def get_middle_of_black_point_border(point_list:list):
+    """
+    Middles the black connect lines
+    returns: List of (x_n,y_n) that are the middle of a black line
+    """
 
-near_points = points_near_line(point_list, line_start[0], line_start[1], line_end[0], line_end[1], threshold_distance)
+    if not point_list:
+        return []  # If the list is empty, return []
 
-print("Points near the line:", near_points)
+    # Extract all x-values and y-values
+    x_values = [x for x, y in point_list]
+    y_values = [y for x, y in point_list]
+
+    # Check if all x-values are the same
+    all_x_same = all(x == x_values[0] for x in x_values)
+    all_y_same = all(y == y_values[0] for y in y_values)
+
+    averaged_line_start= []
+    if all_x_same:
+        # Sort the y-values to find consecutive points
+        sorted_y = sorted(y_values)
+        for i in range(len(sorted_y) - 1):
+            if sorted_y[i+1] - sorted_y[i] == 1:
+                # If the points are consecutive, calculate the middle
+                middle_y = (sorted_y[i] + sorted_y[i+1]) / 2
+                averaged_line_start.append((x_values[0], middle_y))
+
+    elif all_y_same:
+        # Sort the x-values to find consecutive points
+        sorted_x = sorted(x_values)
+        for i in range(len(sorted_x) - 1):
+            if sorted_x[i+1] - sorted_x[i] == 1:
+                # If the points are consecutive, calculate the middle
+                middle_x = (sorted_x[i] + sorted_x[i+1]) / 2
+                averaged_line_start.append((middle_x, y_values[0]))
+
+    else:
+        # If neither all x nor all y values are the same, return an empty list
+        return []
+     
+    averaged_line_start = [(int(x),int(y)) for (x,y) in averaged_line_start]
+    return averaged_line_start
+
 
 def test():
     dataset_name = ask_for_dataset(new_create_bool=False)
@@ -162,19 +210,16 @@ def test():
     img = cv2.cvtColor(img, cv2.COLOR_RGBA2BGR)
     
     black_line_list = []
-    for (x, y), class_id, degree in data:
-        part_img, origin = cut_image_np_safe(img, x, y)
+    debug =[]
+    for i, ((x_0, y_0), class_id, degree) in enumerate(data):
+        part_img, origin = cut_image_np_safe(img, x_0, y_0)
         border_black_points_list = check_for_black_pixel_at_border(part_img, origin)
-
-        # Calculate the line 
         for (x_1, y_1) in border_black_points_list:
-            if check_line_for_black_points(img, x, y, x_1, y_1):
-                print(f"Line from ({x}, {y}) to ({x_1}, {y_1}) is valid.")
-                black_line_list.append([(x, y), (x_1, y_1)])
-            else:
-                print(f"Line from ({x}, {y}) to ({x_1}, {y_1}) is invalid.")
-            
-    img = draw_stuff_on_image_and_save(img, [], black_line_list)
+            if check_line_for_black_points(img, x_0, y_0, x_1, y_1):
+                debug.extend([(x_0, y_0),(x_1, y_1)])
+                black_line_list.append(((x_0, y_0),(x_1, y_1)))
+
+    img = draw_stuff_on_image_and_save(img, debug,black_line_list)
     visualize_image(img)
 
 if __name__ == '__main__':

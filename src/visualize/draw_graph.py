@@ -32,25 +32,27 @@ def draw_stuff_on_image_and_save(img: np.ndarray, points: list, degree_lines:lis
         print('Draw Stuff on image did not work, points can not be INTED!')
         return img
     
-    # Degree Lines zu Ints
-    try:
-        degree_lines = [(int(x),int(y)) for (x,y) in point for point in points]
-    except:
-        print('Draw Stuff on image did not work, Degree Lines can not be INTED!')
-        return img 
-
-
     # Loop over points to draw
     for point in points:
         cv2.circle(img, point, radius=5, color=point_color, thickness=-1)
 
+    
+
+    # Degree Lines zu Ints
+    try:
+        degree_lines = [((int(x_0), int(y_0)),(int(x_1), int(y_1))) for ((x_0, y_0),(x_1, y_1)) in degree_lines]
+    except:
+        print('Draw Stuff on image did not work, Degree Lines can not be INTED!')
+        return img 
 
     # Loop over lines to draw
     for line in degree_lines:
         cv2.line(img, line[0], line[1], line_color, 2)
 
+
+
     # Convert the RGB image to BGR (OpenCV uses BGR)
-    img = cv2.cvtColor(img, cv2.COLOR_RGBA2BGR)
+    ##img = cv2.cvtColor(img, cv2.COLOR_RGBA2BGR)
 
     ## Save the image
     if save:
