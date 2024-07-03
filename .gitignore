@@ -1,4 +1,5 @@
 .gitignore
+.venv
 data_folder/datasets/*
 neural_network_stuff/models/*
 data_folder/noised_images/*

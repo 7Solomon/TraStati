@@ -1,5 +1,6 @@
 import random
 import argparse
+import os
 
 from src.data_folder.get_system_image.grid import generate_a_connected_grid, get_lengths
 
@@ -130,14 +131,23 @@ def connect_lager(connector_list, lager_liste, positionABCMap_passed):
 
 def getSystemAndSave(randomize=False):
     global data
-    open("src/data_folder/get_system_image/data.tex", "w").close()
-    data += '\\batchmode'
+
+    tex_output_path = os.path.join("src","data_folder", "get_system_image", "data.tex")
+
+
+    open(tex_output_path, "w").close()
+    #data += '\\batchmode'
+    #data += '\n'
+
     data += '\\documentclass[12pt,letterpaper]{article}'
     data += '\n'
-    data += '\\usepackage{tikz}'
+
+    data += '\\usepackage{styles/tikz}'
     data += '\n'
-    data += '\\usepackage{stanli}'
+    data += '\\usepackage{styles/stanli}'
     data += '\n'
+
+
     data += '\\begin{document}'
     data += '\n'
     data += '\\begin{figure}'
@@ -162,8 +172,8 @@ def getSystemAndSave(randomize=False):
     data += '\n'
     data += '\\end{document}'
     data += '\n'
-
-    f = open("src/data_folder/get_system_image/data.tex", "w")
+    
+    f = open(tex_output_path, "w")
 
     f.write(data)
     f.close()

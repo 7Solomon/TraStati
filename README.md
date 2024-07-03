@@ -100,9 +100,33 @@ Folge den Anweisungen auf
 [ImageMagick](https://imagemagick.org/script/download.php#windows)
 um ImageMick zu installieren.
 
+
+Um PDF in jpgs umzuwandeln wird auf Windows Ghostscsript benötigt.
+Folge den Anweisungen auf
+[Ghostscript](https://ghostscript.com/releases/gsdnld.html)
+um GS zu installieren.
+
+
+Außerdem müssen die drei programme zum PATH hinzugefügt werden.
+
+
+##### pip packages auf Windows
+
 Ich hatte bei der installierung auf Windows probleme mit ein paar python packages und unkompatiblen python versions.
 Dies muss noch tiefer ausprobiert werden.
 
+Manuel zu installierende Packages:
+´´´
+torch
+...
+torchvision
+...
+opencv-python
+matplotlib
+latex
+numpy<2.0.0
+
+´´´
 
 ## path configuration
 
