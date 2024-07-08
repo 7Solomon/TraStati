@@ -6,6 +6,9 @@
 # Display Mode
 display_mode = "cv2"
 
+# Image generation
+randomize_images = True
+
 
 # Save Options
 save_heatmap = True
@@ -20,3 +23,4 @@ clip_max_norm = 0.1
 # Conenction Map Parameter
 img_cut_out = 100
 black_pixel_margin = 100
+

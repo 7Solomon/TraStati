@@ -71,73 +71,39 @@ def cut(img, pos, label, ABSTAND = 200):
 # Example usage:
 # cut(img, (1088, 1361), [(0, 0), (20.0, -0.0), (0.0, -20.0), (20.0, -20.0), (20.0, -40.0)])
 
-
-
-def get_label(id):
-    data = open('src/data_folder/get_system_image/img/label.txt', 'r').read().split('\n')
-    for element in data:
-        if element.split(':')[0] == id:
-            label_of_image = element.split(':')[1] 
-            pattern = r'\[(.*?)\]'
-
-            # Find all matches using re.findall
-            matches = re.findall(pattern, label_of_image)
-
-            # Convert the matches to a list of tuples
-            output_array = [eval(match) for match in matches]
-            return output_array
-    
-    print('Didnt found Label, oder so')
     
 
 
-def create_label_for_cut_images(id,old_label, ABSTAND = 200):
-    label_file = f'src/data_folder/cut_images/label.txt'
-    #draw = ImageDraw.Draw(DELETE)
-    for i,element in enumerate(old_label):
+def create_label_for_cut_images(label_data, ABSTAND = 200):
+    for i,element in enumerate(label_data):
         (x,y) = element[0]
         point = (ABSTAND + int(x*12),ABSTAND + int(abs(y)*12))
-        #draw.point(point, fill=(0, 255, 0))
-        old_label[i] = [(point),*element[1:]]
-    #print(old_label)
-    #draw._image.show()
-    
-    with open(label_file, 'a') as file:
-        file.write(f'{id}:')
-        file.write('|'.join(str(item) for item in old_label))
-        file.write('\n')
+        label_data[i] = [(point),*element[1:]]
 
+    return label_data
 
-def resize(id):
-    
-    path = f'src/data_folder/get_system_image/img/{id}.jpg'
-    out_path = f'src/data_folder/cut_images/{id}.jpg'
+def resize(img, label):
     try:
-        label = get_label(id)
-        with Image.open(path) as img:
-            #paint_points(img,label)
-            #found_last_black_pixel(img)
-            position = find_zero_size(img)
-            cut_image = cut(img, position, label, ABSTAND=300)
-            create_label_for_cut_images(id,label, ABSTAND = 300)
-            print(type(cut_image))
-            cut_image.save(out_path)
-            
-            
-            # For testing
-            #test_drawer(label,cut_image)
+        position = find_zero_size(img)
+        cut_image = cut(img, position, label, ABSTAND=300)
+        label = create_label_for_cut_images(label, ABSTAND = 300)
+        return cut_image, label
              
     except UnidentifiedImageError:
-        pass
+        return None
 
+
+"""
 def resize_all_images():
     paths = os.listdir('src/data_folder/get_system_image/img')
     for path in paths:
         if path != 'label.txt':
             id = path.split('.')[0]
             resize(id)
+"""
+
 
 
 if __name__ == "__main__": 
-    resize_all_images()
+    print('no right filo')
     #resize()

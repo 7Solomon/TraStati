@@ -1,6 +1,5 @@
 import ast
 import os
-from PIL import Image, UnidentifiedImageError
 import numpy as np
 
 import cv2
@@ -13,6 +12,10 @@ import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 from src.visualize.draw_graph import get_degree_lines, draw_stuff_on_image_and_save, get_points_from_label
 from src.visualize.visualize_image import visualize_image
+
+import random
+
+
 
 transform = transforms.Compose([
         transforms.ToTensor(),  # Konvertiert das Bild in einen Tensor
@@ -54,7 +57,7 @@ def target_transform(label):
 
 
 class CustomImageDataset(Dataset):
-    def __init__(self, path, transform=transform,target_transform=target_transform):
+    def __init__(self):
         self.transform = transform
         self.target_transform = target_transform
 
@@ -62,29 +65,6 @@ class CustomImageDataset(Dataset):
         self.label_dic = {}
         self.image_dic = {}
 
-        self.get_data(path)
-
-    def get_images(self, img_ids, path):
-        for id in img_ids:
-            with Image.open(f'{path}/{id}.jpg').convert("RGB") as img:
-                self.image_dic[id] = img
-    def get_data(self,path):
-        new_images_to_add = []
-        with open(f'{path}/label.txt') as label_file:
-            label_list = label_file.read().split('\n')
-            for object in label_list:
-                split_object = object.split(':')
-                if len(split_object) == 2:
-                    key = split_object[0]
-                    value = split_object[1].split('|')
-                    value = [ast.literal_eval(e) for e in value]
-                    self.label_dic[key] = value
-
-                    self.id_list.append(key)
-                    new_images_to_add.append(key)
-        self.get_images(new_images_to_add,path)   
-
-        
     def __len__(self):
         return len(self.id_list)
 
@@ -100,10 +80,13 @@ class CustomImageDataset(Dataset):
         self.label_dic.update(dataset.label_dic)
         self.image_dic.update(dataset.image_dic)
 
-    def add_new_data(self, new_path):
-        self.get_data(new_path)
+    def add_new_img(self, img, id, label_data):
+        self.image_dic[id] = img
+        self.label_dic[id] = label_data
 
-    def display_data(self,idx=0):
+        self.id_list.append(id)
+
+    def display_data(self, idx:int , save:bool = False):
         id = self.id_list[idx]
         img = self.image_dic[id]
 
@@ -113,10 +96,54 @@ class CustomImageDataset(Dataset):
         img_array = np.array(img)        
         img = draw_stuff_on_image_and_save(img_array,points,degree_lines)
 
-        # To save to file
-        #cv2.imwrite('assets/test_output_image.jpg', img)
+        if save:
+            cv2.imwrite('assets/test_output_image.jpg', img)
 
         visualize_image(img, f'Image nr. {idx}')
+    
+
+    def save_to_file(self, dataset_name):
+        """
+        Save the dataset to files, automatically splitting into train and val sets.
+        
+        :param dataset_name: Name of the dataset (used in the file path)
+        """
+        # Create the directory if it doesn't exist
+        save_dir = os.path.join('src', 'data_folder', 'datasets', dataset_name)
+        os.makedirs(save_dir, exist_ok=True)
+
+        # Determine the split
+        total_images = len(self.id_list)
+        if total_images < 100:
+            val_size = max(5, int(0.2 * total_images))
+        elif total_images < 1000:
+            val_size = int(0.1 * total_images)
+        else:
+            val_size = int(0.05 * total_images)
+        train_size = total_images - val_size
+
+        # Randomly shuffle the id_list
+        shuffled_ids = random.sample(self.id_list, len(self.id_list))
+
+        # Create train and val datasets
+        train_dataset = CustomImageDataset()
+        val_dataset = CustomImageDataset()
+
+        # Populate train dataset
+        for id in shuffled_ids[:train_size]:
+            train_dataset.add_new_img(self.image_dic[id], id, self.label_dic[id])
+
+        # Populate val dataset
+        for id in shuffled_ids[train_size:]:
+            val_dataset.add_new_img(self.image_dic[id], id, self.label_dic[id])
+
+        # Save the datasets
+        torch.save(train_dataset, os.path.join(save_dir, 'train.pt'))
+        torch.save(val_dataset, os.path.join(save_dir, 'val.pt'))
+
+        print(f"Datensatz gesaven in {save_dir}")
+        print(f"Train set size: {len(train_dataset)}")
+        print(f"Val set size: {len(val_dataset)}")
 
 
 

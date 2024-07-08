@@ -3,78 +3,87 @@ import torch
 import argparse, os
 from src.neural_network_stuff.custome_DETR.detr import build
 from src.neural_network_stuff.train import train_net
-from src.data_folder.create_data_folder import create_valTrain_folder
-from src.data_folder.manage_datasets import loop_iteration_for_datasets, create_datasets, load_datasets, add_to_datasets, clear_label_files
+from src.data_folder.manage_datasets import load_datasets, add_to_datasets, clear_label_files, create_random_image
 from src.visualize.visualize_dataset import load_dataset_and_ask_for_idx
 from src.visualize.visualize_output import visualize_output
 
-
-def create_folders():
-    create_valTrain_folder('src/data_folder/test_dataloader')    # Random und n können hier rein
+from src.neural_network_stuff.custome_dataset import CustomImageDataset
 
 
-
-def ask_for_dataset(new_create_bool: bool = False):
-    if os.path.exists('src/data_folder/datasets/'):
-        datasets = list(set(["_".join(e.split('_')[:-1]) for e in os.listdir('src/data_folder/datasets/')]))
-    else:
+def ask_for_dataset():
+    if not os.path.exists('src/data_folder/datasets/'):
         os.mkdir('src/data_folder/datasets/')
-        datasets = list(set(["_".join(e.split('_')[:-1]) for e in os.listdir('src/data_folder/datasets/')]))
+
+    datasets = os.listdir('src/data_folder/datasets')
+    
     print('---------Datensätze---------')
+    print('----------------------------')
     for i, dataset in enumerate(datasets):
         print(f'{i}: {dataset}')
-    if new_create_bool:
-        print(f'{len(datasets)}: Willst du ein neues Dataset?')
-    print('----------------------------')
-    idx_set = input('What datasets do you want? ')
     
-    if idx_set == str(len(datasets)) and new_create_bool:
-        name = input('Welchen namen willst du für Datenset? ')
-        
-        # Experimanetal BE carefull, maybe not good this is
-        clear_label_files()
-        create_datasets(name)
-        return name
-    else:
-        # Schauen ob int
-        try:
-            idx_set = int(idx_set)
-            return datasets[idx_set]
-        except:
-            print('Du hast kein Int angegeben, oder er war auserhalb des Bereichs')
-            ask_for_dataset()
+    print('-----')
+    print(f'{len(datasets)}: Willst du ein neues? ')
+    
+    print('----------------------------')
+    print('----------------------------')
+    idx_set = input('Welches datasets willst du? ') 
+
+
+    # erstelle neues Dataset
+    if idx_set == str(len(datasets)):
+       dataset_name = input('Wie willst du das neue Dataset nennen? ')
+       dataset = CustomImageDataset()
+       dataset.save_to_file(dataset_name)
+       return dataset_name
+
+
+    # Get Dataset with id
+    try:
+        idx_set = int(idx_set)
+        return datasets[idx_set]
+    except:
+        print('Du hast kein Int angegeben, oder er war auserhalb des Bereichs')
+        ask_for_dataset()
+    
 
 def ask_for_model(new_create_bool:  bool = False):
-    if os.path.exists('src/neural_network_stuff/models/'):
-        models = os.listdir('src/neural_network_stuff/models/')
-    else:
+    if not os.path.exists('src/neural_network_stuff/models/'):
         os.mkdir('src/neural_network_stuff/models/')
-        models = os.listdir('src/neural_network_stuff/models/')
+
+    models = os.listdir('src/neural_network_stuff/models/')
+    
     print('---------Modelle---------')
+    print('----------------------------')
     for i, model in enumerate(models):
         print(f'{i}: {model}')
-    if new_create_bool:
-        print(f'{len(models)}: Willst du ein neues Modell?')
-    print('-------------------------')
+
+    print('-----')
+    print(f'{len(models)}: Willst du ein neues')
+
+    print('----------------------------')
+    print('----------------------------')
 
     idx_modell = input('Welches Modell willst du? ')
-    if idx_modell == str(len(models)) and new_create_bool:
-        model_name = input('Wie willst du das neue Modell nennen? ')
-        return model_name, True
 
-    else:
-        try:
-            idx_modell = int(idx_modell)
-            return models[idx_modell], False
-        except:
-            print('Du hast kein Int angegeben, oder er war auserhalb des Bereichs')
-            ask_for_model()
+    if idx_modell == str(len(models)):
+        model_name = input('Wie willst du das neue Modell nennen? ')
+        return model_name
+
+    
+    try:
+        idx_modell = int(idx_modell)
+        return models[idx_modell]
+    except:
+        print('Du hast kein Int angegeben, oder er war auserhalb des Bereichs')
+        ask_for_model()
     
 
 
 
 def look_trough_dataset():
-
+    """
+    Loads dataset and displays the image with the ask idx
+    """
     dataset_name = ask_for_dataset()
     load_dataset_and_ask_for_idx(dataset_name)
     
@@ -108,17 +117,23 @@ def test_and_visualize_model():
                     
 
 def data():
-    name = ask_for_dataset(new_create_bool=True)
+    name = ask_for_dataset()
     print('---------')
     try:
-        num_img = int(input('Anzahl an Bildern pro Loop: '))
-        num_loop = int(input('Anzahl an loops: '))
-        print('Mit Randomized Systems')  
+        num_img = int(input('Anzahl an Bildern: '))
+        print('Mit Randomized Systems!')  
     except:
         print('Du hast kein Int angegeben')
-        return
+        #data()
+    dataset = CustomImageDataset()
 
-    loop_iteration_for_datasets(name,num_loop,num_img,randomize=True)
+    for i in range(num_img):
+        img, id, label = create_random_image()
+        dataset.add_new_img(img, id, label)
+
+        if i % 10 == 0 or i == 0:
+            dataset.save_to_file(name)
+
 
     
 

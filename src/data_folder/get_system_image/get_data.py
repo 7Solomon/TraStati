@@ -1,20 +1,11 @@
-import random,os
+import os
 
 from src.data_folder.get_system_image.convert_sytem_as_png import convert_system
 
-def getData(num,randomize=False):
-    for i in range(num):
-        random_string = ''.join(random.choices('0123456789abcdef', k=12))
-        convert_system(random_string,randomize)
+def getData():
+    img, label = convert_system()
+    return img, label
 
-
-def clean_folder(path = 'src/data_folder/get_system_image/img'):
-    open(f'{path}/label.txt', 'w').close()
-
-    list_dir = os.listdir(path)
-    for element_str in list_dir:
-        if element_str != 'label.txt':
-            os.remove(f'{path}/{element_str}')
 
 if __name__ == '__main__':
     #clean_folder()

@@ -57,8 +57,6 @@ def loop_over_image(img_array):
 
 
 
-
-
 def randomize_image(img,value):
 
     points = [x[0] for x in value]
@@ -74,42 +72,11 @@ def randomize_image(img,value):
     image_array = loop_over_image(image_array)
     image_array = cv2.GaussianBlur(image_array, gausian_blur, 100)
     
-    #bgr_image = cv2.cvtColor(image_array, cv2.COLOR_RGB2BGR)
 
     img = Image.fromarray(image_array)
     points = [tuple(e) for e in points.tolist()]
-    #print(degree_line_points)
+
     degrees = [int(np.degrees(np.arctan2(y/100, x/100))) for (x,y) in degree_line_points]
     value = [[points[i],*e[1:-1], degrees[i]] for i,e in enumerate(value)]
-    return img,value
+    return img, value
 
-def get_label_dic(path):
-    labels = {} 
-    with open(f'{path}/label.txt','r') as label_file:
-        data = label_file.read()
-        data = data.split('\n')
-        for element in data:
-            split = element.split(':')
-            if split[0] != '':
-                key, value = split
-                labels[key] = [ast.literal_eval(x) for x in value.split('|')]
-    return labels
-
-
-def randomize_all_images(path,out_path):
-    
-    labels = get_label_dic(path)
-
-    for key in labels:
-        with Image.open(f'{path}/{key}.jpg') as img:
-            img,value = randomize_image(img,labels[key])
-            img.save(f'{out_path}/{key}.jpg')
-        labels[key] = value
-    
-    with open(f'{out_path}/label.txt','w') as label_file:
-        for key in labels:
-            label_file.write(f'{key}:')
-            label_file.write('|'.join(str(item) for item in labels[key]))
-            label_file.write('\n')
-    
-    
