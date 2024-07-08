@@ -108,7 +108,7 @@ def create_label_for_cut_images(id,old_label, ABSTAND = 200):
         file.write('\n')
 
 
-def resize(id='5af694520f5f'):
+def resize(id):
     
     path = f'src/data_folder/get_system_image/img/{id}.jpg'
     out_path = f'src/data_folder/cut_images/{id}.jpg'
@@ -120,6 +120,7 @@ def resize(id='5af694520f5f'):
             position = find_zero_size(img)
             cut_image = cut(img, position, label, ABSTAND=300)
             create_label_for_cut_images(id,label, ABSTAND = 300)
+            print(type(cut_image))
             cut_image.save(out_path)
             
             

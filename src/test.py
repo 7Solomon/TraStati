@@ -211,15 +211,18 @@ def test():
     
     black_line_list = []
     debug =[]
+    debug_2 = []
     for i, ((x_0, y_0), class_id, degree) in enumerate(data):
+        debug_2.append((x_0, y_0))
         part_img, origin = cut_image_np_safe(img, x_0, y_0)
         border_black_points_list = check_for_black_pixel_at_border(part_img, origin)
+        debug_2.extend(border_black_points_list)
         for (x_1, y_1) in border_black_points_list:
             if check_line_for_black_points(img, x_0, y_0, x_1, y_1):
                 debug.extend([(x_0, y_0),(x_1, y_1)])
                 black_line_list.append(((x_0, y_0),(x_1, y_1)))
 
-    img = draw_stuff_on_image_and_save(img, debug,black_line_list)
+    img = draw_stuff_on_image_and_save(img, debug_2,black_line_list)
     visualize_image(img)
 
 if __name__ == '__main__':

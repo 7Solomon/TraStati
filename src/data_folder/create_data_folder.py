@@ -28,6 +28,8 @@ def split_data(end_path,output_path):
         file.write(label_data_train)
     with open(f'{output_path}/val/label.txt','a') as file:
         file.write(label_data_val)
+
+
 def create_valTrain_folder(path,n=10, randomize=False):  
     clean_folder('src/data_folder/get_system_image/img')
     clean_folder('src/data_folder/cut_images')
