@@ -1,6 +1,6 @@
 import argparse
 from src.functions import train, data, look_trough_dataset, test_and_visualize_model
-from src.test import *
+from src.system.system_generation import generate_system
 
 #functions = {'data':data,
 #             'display':look_trough_dataset,
@@ -30,7 +30,7 @@ def main():
     elif args.test:
         test_and_visualize_model()
     elif args.debug:
-        test()
+        generate_system()
     else:
         print('No Argument')
     
