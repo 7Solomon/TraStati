@@ -27,5 +27,5 @@ img_cut_out = 100
 black_pixel_margin = 100
 
 # Sandart length
-standart_length_margin = 1
-
+standart_length_margin = 3
+standart_direction_margin = 0.005
