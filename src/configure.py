@@ -8,6 +8,10 @@ display_mode = "cv2"
 
 # Image generation
 randomize_images = True
+latex_abstand = 20
+generated_system_colums = 8
+generated_system_rows = 20
+
 
 
 # Save Options
@@ -25,6 +29,7 @@ clip_max_norm = 0.1
 # Conenction Map Parameter
 img_cut_out = 100
 black_pixel_margin = 100
+line_margin = 10
 
 # Sandart length
 standart_length_margin = 3

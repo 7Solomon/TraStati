@@ -124,6 +124,7 @@ def get_standart_length_of_system(data_set: CustomImageDataset):
 
 
     points = [(x_0,y_0) for (x_0, y_0), class_id, degree in data]
+    
     distances = efficient_distance(points)
     directions = normalized_direction_matrix(points)
     

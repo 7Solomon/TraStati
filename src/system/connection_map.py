@@ -14,7 +14,7 @@ import src.configure as configure
 def connection_map(data_set: CustomImageDataset):
     
     # Load Image
-    id = data_set.id_list[0]
+    id = data_set.id_list[4]
     img = data_set.image_dic[id]
     data = data_set.label_dic[id]
 
@@ -22,14 +22,29 @@ def connection_map(data_set: CustomImageDataset):
     img = np.array(img)
     img = cv2.cvtColor(img, cv2.COLOR_RGBA2BGR)
 
+    points = [(x_0, y_0) for (x_0, y_0), class_id, degree in data]
+    staebe = []
+    debug = []
+    for (x,y) in points: 
+        for (x_1,y_1) in points:
+            if x != x_1 and y != y_1:
+                is_black, corrected_x0, corrected_y0, corrected_x1, corrected_y1 = check_and_correct_black_line(img, x, y, x_1, y_1)
+                if is_black:
+                    staebe.append(((corrected_x0,corrected_y0),(corrected_x1,corrected_y1)))
+                else:
+                    debug.append(((x,y),(x_1,y_1)))
+                
+   
+    img = draw_stuff_on_image_and_save(img,[],staebe)
+    img = draw_stuff_on_image_and_save(img,[],debug, line_color=(0,255,0))
+    visualize_image(img)
 
-    
-    for i, ((x_0, y_0), class_id, degree) in enumerate(data):
+    """for i, ((x_0, y_0), class_id, degree) in enumerate(data):
         part_img, origin = cut_image_np_safe(img, x_0, y_0) 
         points = check_for_black_pixel_at_border(part_img, origin)
 
         display_img = draw_stuff_on_image_and_save(img, points, [])
-        visualize_image(display_img)
+        visualize_image(display_img)"""
 
 
 
@@ -56,6 +71,165 @@ def cluster_and_average(points, threshold=5):
         averaged_points.append((round(x_avg), round(y_avg)))
     
     return averaged_points
+
+
+def bresenham_line(x0, y0, x1, y1):
+    """Returns the list of points in the line from (x0, y0) to (x1, y1) using Bresenham's algorithm.
+    param: x0 absolut kord
+    param: y0 absolut kord
+    param: x1 absolut kord
+    param: y1 absolut kord
+    """
+    points = []
+    dx = abs(x1 - x0)
+    dy = abs(y1 - y0)
+    sx = 1 if x0 < x1 else -1
+    sy = 1 if y0 < y1 else -1
+    err = dx - dy
+
+    while True:
+        points.append((x0, y0))
+        if x0 == x1 and y0 == y1:
+            break
+        e2 = 2 * err
+        if e2 > -dy:
+            err -= dy
+            x0 += sx
+        if e2 < dx:
+            err += dx
+            y0 += sy
+
+    return points
+
+
+
+def is_line_black(image, x0, y0, x1, y1, black_threshold):
+    line_points = bresenham_line(x0, y0, x1, y1)
+    for x, y in line_points:
+        if 0 <= x < image.shape[1] and 0 <= y < image.shape[0]:
+            if not np.all(image[y, x] <= black_threshold):
+                return False
+        else:
+            return False
+    return True
+
+
+def find_continuous_line(image, x_start, y_start, line_margin, black_threshold):
+    if (0 + line_margin <= x_start < image.shape[1] - line_margin and
+        0 + line_margin <= y_start < image.shape[0] - line_margin):
+        
+        roi = image[y_start-line_margin:y_start+line_margin, 
+                    x_start-line_margin:x_start+line_margin]
+        color_mask = np.all(roi <= black_threshold, axis=-1)
+        #print(color_mask)
+
+        
+        if np.any(color_mask):
+            # Find coordinates of black pixels
+            black_pixel_positions = np.where(color_mask)
+            #print(black_pixel_positions)
+            y_coords, x_coords = np.where(color_mask)
+            #print(y_coords)
+            #print(y_coords)
+            # Calculate average x and y
+            avg_x = np.mean(x_coords)
+            avg_y = np.mean(y_coords)
+            
+            #print(f'avg: {(avg_x,avg_y)}')
+            #img = draw_stuff_on_image_and_save(image,[(x_start+avg_x,y_start+avg_y)],[],point_color=(0,150,0))
+            #visualize_image(img)
+            return (int(x_start+avg_x),int(y_start+avg_y))
+    
+    return None
+
+def check_and_correct_black_line(image, x0, y0, x1, y1):
+    margin = configure.black_pixel_margin
+    line_margin = configure.line_margin
+    black_threshold = np.array([margin, margin, margin])
+
+    # First, check if the original line is black
+    if is_line_black(image, x0, y0, x1, y1, black_threshold):
+        return True, x0, y0, x1, y1
+
+    # If not, look for a continuous black line nearby
+    midpoint_x = int((x0 + x1) / 2)
+    midpoint_y = int((y0 + y1) / 2)
+    corrected_center_point= find_continuous_line(image, midpoint_x, midpoint_y, line_margin, black_threshold)
+
+
+    if corrected_center_point:
+
+        c_x, c_y = corrected_center_point
+        delta_x = int((c_x - midpoint_x)//2)
+        delta_y = int((c_y - midpoint_y )//2)
+        
+        new_x0, new_y0, new_x1, new_y1 = x0 + delta_x, y0 + delta_y, x1 + delta_x, y1 + delta_y
+        # Recheck if the corrected line is black
+        img = draw_stuff_on_image_and_save(image,[], [((new_x0, new_y0), (new_x1, new_y1))], line_color=(200,0,0))
+        visualize_image(img)
+        if is_line_black(image, new_x0, new_y0, new_x1, new_y1, black_threshold):
+            print('corrected')
+            return True, new_x0, new_y0, new_x1, new_y1
+
+    # If no black line found or corrected line is not black
+    return False, x0, y0, x1, y1
+
+
+def check_line_for_black_points(image, x0, y0, x1, y1):
+    """
+    Checks if all points on the line between (x0, y0) and (x1, y1) are black within a margin.
+
+    :param image: NumPy array representing the image.
+    :param x0: Global x-coordinate of the start point.
+    :param y0: Global y-coordinate of the start point.
+    :param x1: Global x-coordinate of the end point.
+    :param y1: Global y-coordinate of the end point.
+    :param margin: Margin for pixel values to be considered black.
+    :return: True if all points on the line are black, False otherwise.
+    """
+    line_points = bresenham_line(x0, y0, x1, y1)
+    margin = configure.black_pixel_margin
+    line_margin = configure.line_margin
+    black_threshold = np.array([margin, margin, margin])
+
+    for x, y in line_points:
+        # Check if the pixel is within image boundaries
+        if 0 <= x < image.shape[1] and 0 <= y < image.shape[0]:
+            pixel_value = image[y, x]
+            #print(f"Checking pixel at ({x}, {y}) with value {pixel_value} against threshold {black_threshold}")
+            if not np.all(pixel_value <= black_threshold):
+                #print(f"Pixel at ({x}, {y}) is not black: {pixel_value}")
+                return False
+            # Check if not just line over or under
+            else:
+                x_start,y_start = line_points[int(len(line_points)//2)]    # Take the middle of the line
+
+                if 0 + line_margin <= x_start < image.shape[1] - line_margin and 0 + line_margin <= y_start < image.shape[0] - line_margin:
+                    region_of_interest = image[y_start-margin:y_start+margin, x_start-margin:x_start+margin]
+    
+
+                    color_mask = np.abs(region_of_interest) <= black_threshold 
+                    kernel = np.ones((3,3), np.uint8)
+                    closed = cv2.morphologyEx(color_mask.astype(np.uint8), cv2.MORPH_CLOSE, kernel)
+                    
+                    for i in range(4):  # Check all 4 sides
+                        rotated = np.rot90(closed, i)
+                        if np.any(np.all(rotated, axis=0)):
+                            return True
+
+
+                        
+        else:
+            #print(f"Pixel at ({x}, {y}) is out of image bounds")
+            return False
+    return True
+
+
+
+
+
+
+
 
 
 def check_for_black_pixel_at_border(img_part: np.ndarray, origin: tuple):

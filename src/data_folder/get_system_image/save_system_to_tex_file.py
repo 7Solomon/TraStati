@@ -1,12 +1,47 @@
 import random
 import argparse
 import os
+import string
 
 from src.data_folder.get_system_image.grid import generate_a_connected_grid, get_lengths
 import src.configure as configure 
-data = ''
 positionABCMap = {}
-intToABC = {'0':'a', '1':'b', '2':'c', '3':'d', '4':'e', '5':'f', '6':'g', '7':'h', '8':'i', '9':'j', '10':'k', '11':'l', '12':'m', '13':'n', '14':'o', '15':'p', '16':'q', '17':'r', '18':'s', '19':'t', '20':'u', '21':'v', '22':'w', '23':'x', '24':'y', '25':'z'}
+intToABC = dict(enumerate(string.ascii_lowercase))
+
+
+### Can be added to document_start to remove debug output
+#data += '\\batchmode'
+#data += '\n'
+document_start = """
+\\documentclass[12pt,letterpaper]{article}
+\n
+\\usepackage{styles/tikz}
+\n
+\\usepackage{styles/stanli}
+\n
+\\begin{document}
+\n
+\\begin{figure}
+\n
+\\centering
+\n
+\\begin{tikzpicture}
+\n
+\\scaling{.1}
+\n
+"""
+
+null_punkt = """
+\\fill[red] (0, 0) circle (1pt);
+\n
+\\end{tikzpicture}
+\n
+\\end{figure}
+\n
+\\end{document}
+\n
+"""
+    
 
 def get_type_and_rotation(grid,i,j):
     arround_list = []
@@ -37,150 +72,108 @@ def get_type_and_rotation(grid,i,j):
     else:
         rotation = 0
 
-
+    print(f'tr:{type,rotation}')
     return type, rotation
-
-def loopSystem(randomize=False):
-
-
-    label_list = []
-    grid, connector_list = generate_a_connected_grid(3, 3, PROB=0.3)
-    #print(connector_list)
-    
-    #VISUALIZE
-    #print('ACHTUNG: visualisierung ist nicht ganz richtig')  jetzt ist es richtig
-    #for line in grid:
-    #    print(line)
- 
-    lager_liste = get_lengths(grid, randomize=randomize)
-    
-    for n_i, lager in enumerate(lager_liste):
-        (i,j), (x,y) = lager[0], lager[1]
-        type, rotation = get_type_and_rotation(grid,i,j)
-        
-        label_list.append([(x,y),type,rotation])
-
-
-        writeALager(n_i,x,y,type, rotation,i,j)
-    
-    connect_lager(connector_list, lager_liste, positionABCMap)
-    return label_list
 
 
 def writeALager(n_i,position_x,position_y, type, rotation, i, j): 
-    global data, positionABCMap
-    
-    
-    line_1 = '\point' + '{' + intToABC[str(n_i)] + '}' + '{' + str(position_x) + '}' + '{' + str(position_y) + '}' + '\n'
-    
-
+    global positionABCMap
+   
+    base_line = rf'\point{{{intToABC[n_i]}}}{{{position_x}}}{{{position_y}}}'
+   
     if type != 0:
-        line_2 = '\support' + '{' + str(type)+ '}' + '{' + intToABC[str(n_i)] + '}' + '[' + str(rotation) + ']' + '\n'
+         support_line = rf'\support{{{type}}}{{{intToABC[n_i]}}}{rotation}'
     else:
-        line_2 = '\hinge' + '{' + '1' + '}' + '{' + intToABC[str(n_i)] + '}' + '\n'
+        support_line = rf'\hinge{{1}}{{{intToABC[n_i]}}}'
    
     
-    data += line_1
-    data += line_2
+    tex_data = f"{base_line}\n{support_line}\n"
 
-    positionABCMap[(i,j)] = intToABC[str(n_i)] 
+    positionABCMap[(i,j)] = intToABC[n_i] 
+    return tex_data
 
 def connect_lager(connector_list, lager_liste, positionABCMap_passed):
-    global data
+    connect_tex_data = ''
     allready_connected = []
-    #print(lager_liste)
-    #print(positionABCMap_passed)
 
     for balken in connector_list:
+        # Look for the lager that are conencted
         first_lager, second_lager = positionABCMap_passed[balken[0]], positionABCMap_passed[balken[1]]
-        #print((first_lager,second_lager))
 
+        # Dont take doubles
         if (first_lager,second_lager) in allready_connected or (second_lager,first_lager) in allready_connected:
             continue
-
         allready_connected.append((first_lager,second_lager))
 
-        line_1 = '\\beam' +  '{' + '4' + '}' +  '{' + first_lager + '}' + '{' + second_lager + '}' + '\n'
-        data += line_1
-        """
-        (i,j), (x,y) = lager[0], lager[1]
-        found_idx =  []
-        for idx, sublist in enumerate(connector_list):
-            if (i,j) in sublist:
-                found_idx.append(idx)
-        print(lager)
-        print(found_idx)
-        #print(f'{(i,j)}: {[connector_list[e] for e in found_idx]}')
-        for element in found_idx:
-            first_lager, secondLager = connector_list[element]
-            
-            buchstabe_1 = positionABCList_passed[[e[0] for e in positionABCList_passed].index(first_lager)][1]
-            buchstabe_2 = positionABCList_passed[[e[0] for e in positionABCList_passed].index(secondLager)][1]
-            print(f'{positionABCList_passed[[e[0] for e in positionABCList_passed].index(first_lager)][1]}: {[e[0] for e in positionABCList_passed].index(first_lager)}')
-            print(f'{positionABCList_passed[[e[0] for e in positionABCList_passed].index(secondLager)][1]}: {[e[0] for e in positionABCList_passed].index(secondLager)}')
-            print(f'{connector_list[element]}: {buchstabe_1}, {buchstabe_2}')
+        # Write Beam to Tex
+        line = '\\beam' +  '{' + '4' + '}' +  '{' + first_lager + '}' + '{' + second_lager + '}' + '\n'
+        connect_tex_data += line
+    
+    return connect_tex_data
 
-            if (buchstabe_1, buchstabe_2) in allready_connected or (buchstabe_2, buchstabe_1) in allready_connected:
-                continue
-            allready_connected.append((buchstabe_1, buchstabe_2))
-            """
-            #line_1 = '\\beam' +  '{' + '4' + '}' +  '{' + buchstabe_1 + '}' + '{' + buchstabe_2 + '}' + '\n'
-            
-            #data += line_1
+
+def lager_generator():
+    test =  {}
+    grid, connector_list = generate_a_connected_grid(3, 3, PROB=0.3)
+
+
+
+
+def loopSystem():
+    point_data, lager_tex_data = [], []
+    grid, connector_list = generate_a_connected_grid(3, 3, PROB=0.3)
+    print(grid)
+
+    # Für die Randomization der lengths
+    lager_liste = get_lengths(grid)
+
+    # Loop über Grid um Tex Data zu bekommen
+    for n_i, lager in enumerate(lager_liste):
+        (i,j), (x,y) = lager['index'], lager['koordinaten']
+        type, rotation = get_type_and_rotation(grid,i,j)
+    
+        point_data.append([(x,y),type,rotation])
+        lager_tex_data.append(writeALager(n_i,x,y,type, rotation,i,j))
+    
+    # Get the connection balken between the points
+    connect_tex_data = connect_lager(connector_list, lager_liste, positionABCMap)
+    
+    
+    label = {
+        'points':point_data,
+        'connections': connector_list
+    }
+    tex_data =  {
+        'points' : "".join(lager_tex_data),
+        'connections': connect_tex_data
+    }
+    return label, tex_data
+
 
 
 def getSystemAndSave():
-    global data
+    """
+    returns:
+    """
+    global document_start, null_punkt
     tex_output_path = os.path.join("src","data_folder", "get_system_image", "data.tex")
-    randomize = configure.randomize_images
 
+    # ensures the file exists, and is empty
     open(tex_output_path, "w").close()
-    #data += '\\batchmode'
-    #data += '\n'
 
-    data += '\\documentclass[12pt,letterpaper]{article}'
-    data += '\n'
+    # Get the data 
+    label, tex_data = loopSystem()
+    # Combines Data for Tex file 
+    data = document_start + tex_data['points'] + tex_data['connections'] +  null_punkt  
 
-    data += '\\usepackage{styles/tikz}'
-    data += '\n'
-    data += '\\usepackage{styles/stanli}'
-    data += '\n'
-
-
-    data += '\\begin{document}'
-    data += '\n'
-    data += '\\begin{figure}'
-    data += '\n'
-    data += '\\centering'
-    data += '\n'
-    data += '\\begin{tikzpicture}'
-    data += '\n'
-    data += '\\scaling{.1}'
-    data += '\n'
-
-    label_list = loopSystem(randomize)
-
-    # Nullpunkt definieren
-    data +=  '\\fill[red] (0, 0) circle (1pt);'
-    data += '\n'
-
-
-    data += '\\end{tikzpicture}'
-    data += '\n'
-    data += '\\end{figure}'
-    data += '\n'
-    data += '\\end{document}'
-    data += '\n'
-    
+    #print(data)
+    # Save data to Tex file
     f = open(tex_output_path, "w")
-
     f.write(data)
     f.close()
     
-    data = ''
-    positionABCList = ''
 
-    return label_list
+    return label['points']
 
 
 
