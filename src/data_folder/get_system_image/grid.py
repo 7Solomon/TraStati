@@ -52,7 +52,7 @@ def generate_a_connected_grid(rows, cols, PROB=0.4):
     for n, (i, j) in enumerate(connected_line):
         end_grid[i][j] = 1
 
-
+    print(connector_list)
     return end_grid, connector_list
 
 def get_lengths(grid):
@@ -62,7 +62,7 @@ def get_lengths(grid):
     """
     ABSTAND = configure.latex_abstand
     randomize = configure.randomize_images
-    
+
     lager_liste = []
     for i in range(len(grid)):
         for j in range(len(grid[0])):
@@ -95,65 +95,149 @@ def get_lengths(grid):
 
 
 
-class Lager():
-    def __init__(self,type) -> None:
-        self.type = type
-        self.koordinats = (None,None)
-        self.connections = []
-    def __str__(self):
-        return f"{self.type}"
-    
-
 
 def generate_grid(rows, cols):
     return np.array([[0 for _ in range(cols)] for _ in range(rows)])
-def expand_grid(grid):
-    pass
+
 
 
 # Function to check if an index is at the edge
-def is_edge(idx,shape):
+def is_edge(idx:tuple,shape):
     return idx[0] == 0 or idx[0] == shape[0] - 1 or idx[1] == 0 or idx[1] == shape[1] - 1
 # Function to check if two indices are adjacent
-def is_adjacent(idx1, idx2):
+def is_adjacent(idx1:tuple, idx2:tuple):
     return abs(idx1[0] - idx2[0]) + abs(idx1[1] - idx2[1]) == 1
+# Function that checks if diagonal
+def is_diagonal(idx1:tuple, idx2:tuple):
+    return abs(idx1[0] - idx2[0]) ==1 and abs(idx1[1] - idx2[1]) == 1
+def get_opposite_edge(edge):
+    return {'right': 'left', 'left': 'right', 'top': 'bot', 'bot': 'top'}[edge]
 
-def insert_array(base_array, insert_array, position):
-    """
-    Insert an array into another array at a specified position.
-    If the insertion goes beyond the base array's bounds, expand with zeros.
-    
-    :param base_array: The original array (2D NumPy array)
-    :param insert_array: The array to insert (2D NumPy array)
-    :param position: Tuple (row, col) specifying where to insert the top-left corner of insert_array
-    :return: The resulting array after insertion
-    """
-    base_height, base_width = base_array.shape
-    insert_height, insert_width = insert_array.shape
-    row, col = position
-    #print(base_height, row, insert_height)
-    # Calculate the new dimensions
-    new_height = max(base_height, row + insert_height)
-    new_width = max(base_width, col + insert_width)
+def get_edge(idx1,idx2,array):
+    ### Doesnt take the two possible but rather takes just the first one !!! NOt good
+    row1, col1 = idx1
+    row2, col2 = idx2
+    if col1 == array.shape[1] - 1 and col2 == array.shape[1] - 1  :  # If both are in the last Col
+        return 'right'
+    if col1 == 0 and col2 == 0:  # If it's the first col
+        return 'left'
+    if row1 == array.shape[0] - 1 and row2 == array.shape[0] - 1:  # If it's the last row
+        return 'bot'
+    if row1 == 0 and row2 == 0:  # If it's the first row
+        return 'top'
+    if 0 <= col1 < array.shape[0] and 0 <= row1 < array.shape[1] or 0 <= col2 < array.shape[0] and 0 <= row2 < array.shape[1]:
+        return 'inside'
+    raise ValueError("Not Implemented edge!")
 
-    # Create a new array with zeros
-    result = np.zeros((new_height, new_width), dtype=base_array.dtype)
 
-    # Copy the base array into the new array
-    result[:base_height, :base_width] = base_array
 
-    # Insert the new array
-    result[row:row+insert_height, col:col+insert_width] = insert_array
+def append_scheibe(scheibe):
+    array = scheibe['data']
+    index_pairs = scheibe['connection_points']
+    staebe = scheibe['staebe']
 
-    return result
-    
-def format_grid_for_print(grid):
-    def format_cell(cell):
-        if cell is None:
-            return '0'
-        return str(cell)  # This will use your custom __str__ method
+    connect_staebe_between_scheiben = []
+    connection_points = []
+    all_staebe = staebe.copy()
 
-    return '\n'.join([' '.join(map(format_cell, row)) for row in grid])
+    for idx1, idx2 in index_pairs:
+        # Get new one to add
+        new_scheibe = generate_scheibe()
+        add_scheibe = new_scheibe['data']
+        add_scheibe_connection = new_scheibe['connection_points']
+        add_scheibe_staebe = new_scheibe['staebe']
+
+        # Determine the edge of the base scheibe where we're connecting
+        base_edge = get_edge(idx1, idx2, array)
+
+        # Offset for updating coordinates
+        offset_x, offset_y = 0, 0
+
+        # Add the new scheibe based on the base_edge
+        match base_edge:
+            case 'right':
+                new_col = np.zeros((array.shape[0], add_scheibe.shape[1]), dtype=array.dtype)
+                new_col[idx1[0]:idx1[0] + add_scheibe.shape[0], :] = add_scheibe
+                array = np.concatenate((array, new_col), axis=1)
+                offset_x, offset_y = 0, array.shape[1] - add_scheibe.shape[1]
+                
+                # Add staebe between connection points
+                for i in range(add_scheibe.shape[0]):
+                    if array[idx1[0] + i, idx1[1]] != 0 and new_col[idx1[0] + i, 0] != 0:
+                        connect_staebe_between_scheiben.append(((idx1[0] + i, idx1[1]), (idx1[0] + i, array.shape[1] - 1)))
+
+            case 'left':
+                new_col = np.zeros((array.shape[0], add_scheibe.shape[1]), dtype=array.dtype)
+                new_col[idx1[0]:idx1[0] + add_scheibe.shape[0], :] = add_scheibe
+                array = np.concatenate((new_col, array), axis=1)
+                offset_x, offset_y = 0, add_scheibe.shape[1]
+                
+                # Add staebe between connection points
+                for i in range(add_scheibe.shape[0]):
+                    if new_col[idx1[0] + i, -1] != 0 and array[idx1[0] + i, add_scheibe.shape[1]] != 0:
+                        connect_staebe_between_scheiben.append(((idx1[0] + i, add_scheibe.shape[1] - 1), (idx1[0] + i, add_scheibe.shape[1])))
+
+            case 'top':
+                new_row = np.zeros((add_scheibe.shape[0], array.shape[1]), dtype=array.dtype)
+                new_row[:, idx1[1]:idx1[1] + add_scheibe.shape[1]] = add_scheibe
+                array = np.concatenate((new_row, array), axis=0)
+                offset_x, offset_y = add_scheibe.shape[0], 0
+                
+                # Add staebe between connection points
+                for j in range(add_scheibe.shape[1]):
+                    if new_row[-1, idx1[1] + j] != 0 and array[add_scheibe.shape[0], idx1[1] + j] != 0:
+                        connect_staebe_between_scheiben.append(((add_scheibe.shape[0] - 1, idx1[1] + j), (add_scheibe.shape[0], idx1[1] + j)))
+
+            case 'bot':
+                new_row = np.zeros((add_scheibe.shape[0], array.shape[1]), dtype=array.dtype)
+                new_row[:, idx1[1]:idx1[1] + add_scheibe.shape[1]] = add_scheibe
+                array = np.concatenate((array, new_row), axis=0)
+                offset_x, offset_y = array.shape[0] - add_scheibe.shape[0], 0
+                
+                # Add staebe between connection points
+                for j in range(add_scheibe.shape[1]):
+                    if array[-add_scheibe.shape[0] - 1, idx1[1] + j] != 0 and new_row[0, idx1[1] + j] != 0:
+                        connect_staebe_between_scheiben.append(((array.shape[0] - add_scheibe.shape[0] - 1, idx1[1] + j), (array.shape[0] - add_scheibe.shape[0], idx1[1] + j)))
+
+        # Update coordinates of add_scheibe_connection
+        updated_add_scheibe_connection = [
+            ((x1 + offset_x, y1 + offset_y), (x2 + offset_x, y2 + offset_y))
+            for (x1, y1), (x2, y2) in add_scheibe_connection
+        ]
+        connection_points.extend(updated_add_scheibe_connection)
+
+        # Update coordinates of add_scheibe_staebe
+        updated_add_scheibe_staebe = [
+            ((x1 + offset_x, y1 + offset_y), (x2 + offset_x, y2 + offset_y))
+            for (x1, y1), (x2, y2) in add_scheibe_staebe
+        ]
+        all_staebe.extend(updated_add_scheibe_staebe)
+
+    # Add the connecting staebe to all_staebe
+    all_staebe.extend(connect_staebe_between_scheiben)
+
+    # Update existing connection points
+    updated_connection_points = [
+        ((x1, y1), (x2, y2)) for (x1, y1), (x2, y2) in connection_points
+        if 0 <= x1 < array.shape[0] and 0 <= y1 < array.shape[1] and
+           0 <= x2 < array.shape[0] and 0 <= y2 < array.shape[1]
+    ]
+
+    return {
+        'data': array, 
+        'staebe': all_staebe, 
+        'connection_points': updated_connection_points
+    }
+
+def rotate_scheibe_to_match_edge(edge, matrix, idxs1,idxs2):
+    if get_edge(idxs1,idxs2,matrix) == get_opposite_edge(edge):
+        return matrix
+    for i in range(1,3):
+        print(i)
+        rotated = np.rot90(matrix, k=i)
+        if get_edge(idxs1,idxs2,matrix) == get_opposite_edge(edge):
+            return rotated
+
 
 def generate_scheibe():
     """
@@ -162,7 +246,7 @@ def generate_scheibe():
     """
     # init
     scheiben_elemt = np.array([[1,1],[0,1]])
-    
+
     # Randomize
     flattened = scheiben_elemt.flatten()
     np.random.shuffle(flattened)
@@ -173,110 +257,38 @@ def generate_scheibe():
     one_indices = np.where(scheiben_elemt != 0)
     indices = list(zip(*one_indices))
 
-
+    
     # Get adjacent pairs at the edge
     edge_pairs = [
         (idx1, idx2) for i, idx1 in enumerate(indices)
         for j, idx2 in enumerate(indices[i+1:], i+1)
-        if is_adjacent(idx1, idx2) and (is_edge(idx1,shape) or is_edge(idx2,shape))
+        if (is_adjacent(idx1, idx2) or is_diagonal(idx1, idx2)) and (is_edge(idx1,shape) or is_edge(idx2,shape))
     ]
-
-    anzahl_connection_point = random.randint(1,2) 
-    if anzahl_connection_point == 1:
-        edge_pairs = [edge_pairs[random.randint(0,1)]]
-    return {'scheibe': scheiben_elemt, 'connection_points': edge_pairs}
-
-
-
-def create_fachwerk(num_scheiben):
-    fachwerk = []
-    all_connection_points = []
-    combined_array = np.array([[]])
-    position = (0,0)
-
-    for i in range(num_scheiben):
-        scheibe = generate_scheibe()
-        
-        # Update the connection points to reflect the new position in the fachwerk
-        updated_connection_points = [
-            ((p1[0] + position[0], p1[1] + position[1]), (p2[0] + position[0], p2[1] + position[1]))
-            for p1, p2 in scheibe['connection_points']
-        ]
-        
-        # Add the updated scheibe to the fachwerk
-        fachwerk.append({
-            'scheibe': scheibe['scheibe'],
-            'start_position': position,
-            'connection_points': updated_connection_points
-        })
-
-        combined_array = insert_array(combined_array, scheibe['scheibe'],position)
-        pos_positions = updated_connection_points[random.randint(0,len(updated_connection_points)-1)]
-        position = pos_positions[random.randint(0,1)]
-
-        print('-----------')
-        print(combined_array)
-
+    
+    
+    # Get the staebe
+    staeb_pairs = [
+        (idx1, idx2) for i, idx1 in enumerate(indices)
+        for j, idx2 in enumerate(indices[i+1:], i+1)
+        if is_adjacent(idx1,idx2) or is_diagonal(idx1,idx2)
+    ]
+    
     return {
-        'combined_array': combined_array,
-        'scheiben': fachwerk,
-        'all_connection_points': all_connection_points
-    }
+            'data': scheiben_elemt,
+             'staebe': staeb_pairs, 
+             'connection_points': edge_pairs
+            }
+
+
+
+def create_fachwerk():
+    s = generate_scheibe()
+    s = append_scheibe(s)
+    return s
 
 
 def test_grid_generation():
-    lager_data = {'type': 0,
-                  'koordinats': None,
-                  'connections': 
-                    {   
-                        'to': (0,0),
-                        'type': 0
-                        }
-                  }
-    cols = configure.generated_system_colums
-    rows = configure.generated_system_rows
-
-    # generates an array with o and dimension (cols,rows)
-    grid = np.empty((rows, cols), dtype=object)
-    start_row= int(rows//2)
-    
-
-
-    # Set Start Element to Lager
-    lager_type = random.randint(2,4)
-    grid[start_row,0] = Lager(lager_type)
-    #create_section(grid,start_row,0)
-
-    # Example usage
-    fachwerk = create_fachwerk(5)  # Create a fachwerk with 5 scheiben
-    print("Combined Array:")
-    print(fachwerk['combined_array'])
-    print("\nAll Connection Points:")
-    print(fachwerk['all_connection_points'])
-    print("Alle scheiben")
-    print(fachwerk['scheiben'])
-
+    pass
 
 
         
-
-
-    
-
-
-
-
-
-
-
-
-
-if __name__ == "__main__":
-
-    end_grid, con_loc_list = generate_a_connected_grid(5, 5, PROB=0.4)
-    print(con_loc_list)
-    get_lengths(end_grid)
-    print("End Grid:")
-    for row in end_grid:
-        print(row)
-

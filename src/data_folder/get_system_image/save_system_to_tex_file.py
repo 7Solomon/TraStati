@@ -3,7 +3,7 @@ import argparse
 import os
 import string
 
-from src.data_folder.get_system_image.grid import generate_a_connected_grid, get_lengths
+from src.data_folder.get_system_image.grid import generate_a_connected_grid, get_lengths, create_fachwerk
 import src.configure as configure 
 positionABCMap = {}
 intToABC = dict(enumerate(string.ascii_lowercase))
@@ -112,17 +112,15 @@ def connect_lager(connector_list, lager_liste, positionABCMap_passed):
     return connect_tex_data
 
 
-def lager_generator():
-    test =  {}
-    grid, connector_list = generate_a_connected_grid(3, 3, PROB=0.3)
 
 
 
 
 def loopSystem():
     point_data, lager_tex_data = [], []
-    grid, connector_list = generate_a_connected_grid(3, 3, PROB=0.3)
-    print(grid)
+    fw = create_fachwerk()
+    
+    grid, connector_list = fw['data'], fw['staebe']
 
     # Für die Randomization der lengths
     lager_liste = get_lengths(grid)
@@ -177,9 +175,3 @@ def getSystemAndSave():
 
 
 
-
-
-if __name__ == '__main__':
-    label_list = getSystemAndSave()
-    print(f'label_list: {label_list}')
-   

@@ -1,6 +1,6 @@
 import numpy as np
-from src.data_folder.get_system_image.save_system_to_tex_file import getSystemAndSave
-from src.data_folder.get_system_image.grid import test_grid_generation
+from src.data_folder.get_system_image.save_system_to_tex_file import getSystemAndSave, loopSystem
+from src.data_folder.get_system_image.grid import generate_a_connected_grid
 
 
 
@@ -30,7 +30,7 @@ def points_near_line(point_list, x0, y0, x1, y1, threshold_distance):
 
 
 def test():
-    test_grid_generation()
+    print(loopSystem())
 
     
 
