@@ -1,6 +1,10 @@
 import numpy as np
+from src.data_folder.get_system_image.convert_sytem_as_png import convert_system
 from src.data_folder.get_system_image.save_system_to_tex_file import getSystemAndSave, loopSystem
 from src.data_folder.get_system_image.grid import generate_a_connected_grid
+
+
+from src.visualize.visualize_image import visualize_image
 
 
 
@@ -30,8 +34,11 @@ def points_near_line(point_list, x0, y0, x1, y1, threshold_distance):
 
 
 def test():
-    print(loopSystem())
 
+    t,v = loopSystem()
+    print(t)
+    print(v)
+    #visualize_image(image)
     
 
 if __name__ == '__main__':

@@ -55,6 +55,11 @@ def generate_a_connected_grid(rows, cols, PROB=0.4):
     print(connector_list)
     return end_grid, connector_list
 
+
+
+
+
+
 def get_lengths(grid):
     """
     grid: array of shape (3,3) or what was defined in the get_grid
