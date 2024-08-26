@@ -2,7 +2,7 @@ import torch
 import os
 from src.neural_network_stuff.custome_dataset import CustomImageDataset
 
-from src.data_folder.get_system_image.get_data import getData
+from src.data_folder.get_system_image.convert_sytem_as_png import convert_system
 from src.data_folder.resize_image import resize
 from src.data_folder.noise_image import randomize_image
 from src.data_folder.rotate_image import rotate_image
@@ -13,7 +13,7 @@ import random
 def create_random_image():  
     id = ''.join(random.choices('0123456789abcdef', k=12))
 
-    img, label = getData()
+    img, label = convert_system()
 
     img, label = resize(img, label)
     img, label = rotate_image(img, label)

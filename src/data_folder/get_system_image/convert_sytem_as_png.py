@@ -21,7 +21,8 @@ def convert_system():
     image = pdf_to_pil_image()
     
     # Clean up temporary files
-    cleanup_temp_files()
+    ### Dees thorugh Win Error
+    #cleanup_temp_files()
 
 
     return image, label_data
@@ -38,7 +39,7 @@ def pdf_to_pil_image():
     return Image.open(image_bytes)
 
 def cleanup_temp_files():
-    temp_files = [ 'data.aux', 'data.log']   #   'data.tex' 'data.pdf'
+    temp_files = ['data.aux', 'data.log']   #   'data.tex' 'data.pdf'
     for file in temp_files:
         file_path = os.path.join('src' ,'data_folder', 'get_system_image', file)
         if os.path.exists(file_path):

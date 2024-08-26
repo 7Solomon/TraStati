@@ -185,7 +185,9 @@ def getSystemAndSave():
     label, tex_data = loopSystem()
     # Combines Data for Tex file 
     data = document_start + tex_data['points'] + tex_data['connections'] +  null_punkt  
-
+    
+    
+    # print(label)
     #print(data)
     # Save data to Tex file
     f = open(tex_output_path, "w")

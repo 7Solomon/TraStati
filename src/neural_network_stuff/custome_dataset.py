@@ -29,21 +29,19 @@ transform_reverse = transforms.Compose([
 ])
 
 
-def target_transform(label):
-    parsed_data = label
+def target_transform(label:dict):
     items_data = []
     class_data = []
     
-    for i, item in enumerate(parsed_data):
-
-        condensed_item = [item[0][0],item[0][1],*item[2:]]
-
-        items_data.append(condensed_item)
-        class_data.append(item[1])
+    for item in label.values():
+        items_data.append([*item['koordinaten'],item['rotation']])
+        class_data.append(item['type'])
     
     # Change format
     tensor_data = torch.tensor([[x/840, y/960, degree/360] for x,y,degree in items_data], dtype=torch.float32)
     assert len(tensor_data) == len(class_data) 
+    
+    # Get Transform data 
     if len(tensor_data) > 20:
         print('Du hast eine System mit mehr als 20 knoten, passe auf nur die ersten 20 werden genommen')
         transformed_data = torch.stack(tensor_data[:20])
