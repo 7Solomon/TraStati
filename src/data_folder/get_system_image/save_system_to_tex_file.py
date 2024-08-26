@@ -103,11 +103,11 @@ def write_lager(data:dict) -> str:
 
 def connect_lager(staebe_list:list, point_data:dict) -> str:
     connect_tex_data = ''
-    for i,j in point_data.items():
-        print(i, j)
+    #for i,j in point_data.items():
+    #    print(i, j)
     for staeb in staebe_list:
         # Get index of Lagers out of data
-        first_lager_index, second_lager_index = point_data[staeb[0]]['index'], point_data[staeb[0]]['index']
+        first_lager_index, second_lager_index = point_data[staeb[0]]['index'], point_data[staeb[1]]['index']
 
         # Write Beam to Tex
         line = '\\beam' +  '{' + '4' + '}' +  '{' + intToABC[first_lager_index] + '}' + '{' + intToABC[second_lager_index] + '}' + '\n'
@@ -123,12 +123,19 @@ def loopSystem():
     fw = create_fachwerk()
     grid, connector_list = fw['data'], fw['staebe']
 
-    print(grid)
-    print(connector_list)
+    #print(grid)
+    #print(connector_list)
 
     # Für die Randomization der lengths
     ### PROBLEM
-    #lager_liste = get_lengths(grid)
+    lager_liste = get_lengths(grid)
+    """print(grid)
+    for ((i,j),(n,m)) in connector_list:
+        print(f'{(i,j)}: {grid[i,j]}')
+        print(f'{(n,m)}: {grid[n,m]}')
+        print('---')
+    print(lager_liste)"""
+
 
 
     # Loop über Grid um Tex Data zu bekommen

@@ -34,3 +34,16 @@ line_margin = 10
 # Sandart length
 standart_length_margin = 3
 standart_direction_margin = 0.005
+
+### Randomize Image
+# Cut
+cut_image_margin = 200
+
+#Randomize
+possible_blurrs = [(1,1),(3,3,),(5,5)]
+trapez_kor_grenze_start = -20
+trapez_kor_grenze_end = 0
+
+degree_lines_radius = 100
+
+

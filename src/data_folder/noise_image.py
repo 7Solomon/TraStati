@@ -4,6 +4,7 @@ import random,os,ast,math
 import cv2
 
 from src.visualize.draw_graph import draw_stuff_on_image_and_save
+from src import configure
 
 
 #cv2.GaussianBlur(image_eq, (5, 5), 0)
@@ -13,6 +14,14 @@ def point_is_red(point):
     else:
         return False
 
+
+def generate_degree_line_points(degrees:list):
+    """
+    returns list of [((n1x1,n1y1),(n1x2,n1y2)),... n]
+    """
+    radius = configure.degree_lines_radius
+    radians = np.radians(degrees)
+    return list(zip(np.cos(radians) * radius, np.sin(radians) * radius))
 
 def get_random_white_tensor(shape):
     random_tensor = np.random.normal(170, 5, shape)
@@ -25,24 +34,35 @@ def get_random_white_tensor(shape):
     return random_tensor_int
 
 
-def get_trapez(image, points, degree_line_points, distortion_degree=-15):
+def get_trapez(image:np.ndarray, label:dict, distortion_degree:float):
+
+    # Get distortion Matrix
     original_points = np.float32([[0, 0], [image.shape[1] - 1, 0], [0, image.shape[0] - 1], [image.shape[1] - 1, image.shape[0] - 1]])
     distortion = int(distortion_degree * 0.01 * image.shape[1])
     new_points = np.float32([[0, 0], [image.shape[1] - 1, 0], [distortion, image.shape[0] - 1], [image.shape[1] - distortion - 1, image.shape[0] - 1]])
-
     matrix = cv2.getPerspectiveTransform(original_points, new_points)
     
-    
+    # Correct image
     corrected_image = cv2.warpPerspective(image, matrix, (image.shape[1], image.shape[0]))
-    points_reshaped = np.float32(points).reshape(-1, 1, 2)
+
+    # Correct points
+    points_reshaped = np.float32([e['koordinaten'] for e in label.values()]).reshape(-1, 1, 2)
     transformed_points = cv2.perspectiveTransform(points_reshaped, matrix)
     transformed_points = np.int32(transformed_points.reshape(-1, 2))
     
-    degree_line_points_reshaped = np.float32(degree_line_points).reshape(-1, 1, 2)
+
+    # Correct degree lines
+    degree_line_points_reshaped = np.float32(generate_degree_line_points([e['rotation'] for e in label.values()])).reshape(-1, 1, 2)
     transformed_degree_line_points = cv2.perspectiveTransform(degree_line_points_reshaped, matrix)
     transformed_degree_line_points = transformed_degree_line_points.reshape(-1, 2)
+
+    # Update label dictionary
+    for (key, element), new_coord, new_degree_line in zip(label.items(), transformed_points, transformed_degree_line_points):
+        element['koordinaten'] = tuple(new_coord)
+        element['transformed_degree_line'] = tuple(new_degree_line)
+    
     # Transformation der Label_points
-    return corrected_image, transformed_points, transformed_degree_line_points
+    return corrected_image, label
 
 
 def loop_over_image(img_array):
@@ -57,26 +77,23 @@ def loop_over_image(img_array):
 
 
 
-def randomize_image(img,value):
+def randomize_image(img,label:dict):
 
-    points = [x[0] for x in value]
-    degrees = [x[2] for x in value]
 
-    degree_line_points = [(math.cos(math.radians(degree))*100,math.sin(math.radians(degree))*100) for degree in degrees]
+    # Get Blurr and trapez Variables
+    possible_blurrs = configure.possible_blurrs
+    trapez_kor = random.randint(configure.trapez_kor_grenze_start,configure.trapez_kor_grenze_end)
+    
+    # Define blurr
+    gausian_blur = possible_blurrs[random.randint(0,len(possible_blurrs)-1)]
 
-    possible__blurrs = [(1,1),(3,3,),(5,5)]
-    trapez_kor, gausian_blur = random.randint(-20,0), possible__blurrs[random.randint(0,len(possible__blurrs)-1)]
-
+    # Convert to Trapez
     image_array = np.array(img)
-    image_array, points, degree_line_points = get_trapez(image_array,points, degree_line_points,trapez_kor)
+    image_array, label = get_trapez(image_array,label,trapez_kor)
+    
+    # Convert to noise
     image_array = loop_over_image(image_array)
     image_array = cv2.GaussianBlur(image_array, gausian_blur, 100)
     
-
-    img = Image.fromarray(image_array)
-    points = [tuple(e) for e in points.tolist()]
-
-    degrees = [int(np.degrees(np.arctan2(y/100, x/100))) for (x,y) in degree_line_points]
-    value = [[points[i],*e[1:-1], degrees[i]] for i,e in enumerate(value)]
-    return img, value
+    return Image.fromarray(image_array), label
 

@@ -52,40 +52,48 @@ def generate_a_connected_grid(rows, cols, PROB=0.4):
     for n, (i, j) in enumerate(connected_line):
         end_grid[i][j] = 1
 
-    print(connector_list)
+    #print(connector_list)
     return end_grid, connector_list
-
-
 
 
 
 
 def get_lengths(grid):
     """
-    grid: array of shape (3,3) or what was defined in the get_grid
-    returns: an array with {index,koordinaten} Dict with len 9 
+    grid: array of shape (n,n) or what was defined in the get_grid
+    returns: an array with {index, koordinaten} Dict with len 9 
     """
-    ABSTAND = configure.latex_abstand
-    randomize = configure.randomize_images
+    ABSTAND = configure.latex_abstand  # Assuming this is defined somewhere in your config
+    randomize = configure.randomize_images  # Assuming this is defined somewhere in your config
 
-    lager_liste = []
-    for i in range(len(grid)):
-        for j in range(len(grid[0])):
-            if randomize and random.random() < 0.5:
-                randomizer = random.randint(-1,1)
-            else:
-                randomizer = 0
-            if i != 0 or j != 0:
-                x = i * ABSTAND + randomizer * ABSTAND/2
-                y = j * ABSTAND + randomizer * ABSTAND/2
-            else:
-                x = i * ABSTAND
-                y = j * ABSTAND
+    grid = np.array(grid)  # Convert the grid to a NumPy array if it isn't already
 
-            if grid[i][j] == 1:
-                lager_liste.append({'index':(i,j),
-                                    'koordinaten':(y,-x)})
-    
+    # Generate index grids
+    indices = np.indices(grid.shape)
+    i = indices[0]
+    j = indices[1]
+
+    # Apply randomization if necessary
+    if randomize:
+        randomizer = np.random.randint(-1, 2, size=grid.shape)  # Random values in [-1, 0, 1]
+        randomizer = np.where(np.random.random(grid.shape) < 0.5, randomizer, 0)  # Apply randomizer conditionally
+    else:
+        randomizer = np.zeros(grid.shape, dtype=int)
+
+    # Calculate coordinates
+    x = i * ABSTAND + randomizer * ABSTAND / 2
+    y = j * ABSTAND + randomizer * ABSTAND / 2
+
+    # Set the first coordinate (0,0) to avoid randomization
+    x[0, 0] = 0
+    y[0, 0] = 0
+
+    # Create a list of dictionaries for where grid[i][j] == 1
+    lager_liste = [
+        {'index': (i_, j_), 'koordinaten': (y_, -x_)}
+        for i_, j_, x_, y_ in zip(i.flat, j.flat, x.flat, y.flat) if grid[i_, j_] == 1
+    ]
+
     return lager_liste
 
 
@@ -238,7 +246,7 @@ def rotate_scheibe_to_match_edge(edge, matrix, idxs1,idxs2):
     if get_edge(idxs1,idxs2,matrix) == get_opposite_edge(edge):
         return matrix
     for i in range(1,3):
-        print(i)
+        #print(i)
         rotated = np.rot90(matrix, k=i)
         if get_edge(idxs1,idxs2,matrix) == get_opposite_edge(edge):
             return rotated
@@ -287,8 +295,10 @@ def generate_scheibe():
 
 
 def create_fachwerk():
+    ### Append scheibe mach key ERROR da 0 als knotten genommen wird???
     s = generate_scheibe()
-    s = append_scheibe(s)
+    #s = append_scheibe(s)
+    #s = append_scheibe(s)
     return s
 
 
