@@ -4,60 +4,6 @@ import src.configure as configure
 import numpy as np
 
 
-connector_list = []
-
-
-def explore_grid(grid, i, j, connected_points, PROB):
-    rows, cols = len(grid), len(grid[0])
-
-    if i < 0 or j < 0 or i >= rows or j >= cols or (i, j) in connected_points:
-        return
-
-    connected_points.append((i, j))
-
-    neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)]  # Adjacent points
-
-    for x, y in neighbors:
-        ni, nj = i + x, j + y
-        if 0 <= ni < rows and 0 <= nj < cols and random.random() < PROB:  
-            return
-        elif 0 <= ni < rows and 0 <= nj < cols:
-            if [(ni, nj),(i,j)] not in connector_list:
-                connector_list.append([(i,j),(ni,nj)])
-             
-            explore_grid(grid, ni, nj, connected_points, PROB)
-    
-
-def connect_all_points(grid, PROB):
-    rows, cols = len(grid), len(grid[0])
-    connected_points = []
-
-    # Start from a random point
-    start_row, start_col = int(rows/2), int(cols/2)
-    explore_grid(grid, start_row, start_col, connected_points, PROB)
-
-    return connected_points
-
-def generate_a_connected_grid(rows, cols, PROB=0.4):
-    # Reset global 
-    global connector_list
-    connector_list = []
-    
-    start_grid = generate_grid(rows, cols)
-    end_grid = generate_grid(rows, cols)
-
-
-    connected_line = connect_all_points(start_grid, PROB)
-
-    for n, (i, j) in enumerate(connected_line):
-        end_grid[i][j] = 1
-
-    #print(connector_list)
-    return end_grid, connector_list
-
-
-
-
 def get_lengths(grid):
     """
     grid: array of shape (n,n) or what was defined in the get_grid

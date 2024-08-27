@@ -10,7 +10,10 @@ from src.visualize.visualize_output import visualize_output
 from src.neural_network_stuff.custome_dataset import CustomImageDataset
 
 
-def ask_for_dataset():
+def ask_for_dataset()->str:
+    """
+    returns dataset name as Strings
+    """
     if not os.path.exists('src/data_folder/datasets/'):
         os.mkdir('src/data_folder/datasets/')
 
@@ -46,7 +49,10 @@ def ask_for_dataset():
         ask_for_dataset()
     
 
-def ask_for_model(new_create_bool:  bool = False):
+def ask_for_model(new_create_bool:  bool = False)->str:
+    """
+    returns: modelname as String
+    """
     if not os.path.exists('src/neural_network_stuff/models/'):
         os.mkdir('src/neural_network_stuff/models/')
 
@@ -90,6 +96,9 @@ def look_trough_dataset():
     
 
 def test_and_visualize_model():
+    """
+    Test and Visualizes the output of a model on a dataset
+    """
     dataset_name = ask_for_dataset(new_create_bool=False)
     model_name, did_create_new_model = ask_for_model(new_create_bool=False)
 
@@ -117,6 +126,9 @@ def test_and_visualize_model():
                     
 
 def data():
+    """
+    Generates data and saves it to an Dataset
+    """
     name = ask_for_dataset()
     print('---------')
     try:
@@ -128,16 +140,22 @@ def data():
     dataset = CustomImageDataset()
 
     for i in range(num_img):
+        # Get Image, Label and add to dataset
         img, id, label = create_random_image()
         dataset.add_new_img(img, id, label)
 
+        # Zwischen save machen
         if i % 10 == 0 or i == 0:
             dataset.save_to_file(name)
+    dataset.save_to_file(name)
 
 
     
 
 def train():
+    """
+    Trains a Model on a Dataset
+    """
     dataset_name = ask_for_dataset(new_create_bool=False)
     train_set, val_set = load_datasets(dataset_name)
 
@@ -163,6 +181,4 @@ def train():
         # Falls ein neues Modell erstellt wurde
         train_net(model, criterion, train_set, val_set, num_epochs=int(num_eppochs), save_as=f'src/neural_network_stuff/models/{model_name}')
 
-if __name__ == "__main__":
-    print('Du bist in der falschen Datei')
 

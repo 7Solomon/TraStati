@@ -1,7 +1,6 @@
 import numpy as np
 from src.data_folder.get_system_image.convert_sytem_as_png import convert_system
 from src.data_folder.get_system_image.save_system_to_tex_file import getSystemAndSave, loopSystem
-from src.data_folder.get_system_image.grid import generate_a_connected_grid
 from src.data_folder.manage_datasets import create_random_image
 
 
