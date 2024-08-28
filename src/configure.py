@@ -4,7 +4,7 @@
 # "ipy"
 
 # Display Mode
-display_mode = "cv2"
+display_mode = "pil"
 
 # Image generation
 randomize_images = True

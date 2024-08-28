@@ -15,7 +15,9 @@ def create_random_image():
 
     img, label = convert_system()
 
+    # Resizes image and calculates position of points correctly
     img, label = resize(img, label)
+    
     img, label = rotate_image(img, label)
     img, label = randomize_image(img, label)
 

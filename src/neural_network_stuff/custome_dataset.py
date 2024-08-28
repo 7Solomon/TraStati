@@ -10,7 +10,7 @@ from torchvision.io import read_image
 import torchvision.transforms as transforms
 
 from torch.utils.data import DataLoader
-from src.visualize.draw_graph import get_degree_lines, draw_stuff_on_image_and_save, get_points_from_label
+from src.visualize.draw_graph import get_degree_lines, draw_stuff_on_image_and_save
 from src.visualize.visualize_image import visualize_image
 
 import random
@@ -88,7 +88,10 @@ class CustomImageDataset(Dataset):
         id = self.id_list[idx]
         img = self.image_dic[id]
 
-        points,degrees = get_points_from_label(self.label_dic[id])
+        label_list = self.label_dic[id].values()
+        
+
+        points,degrees = [_['koordinaten']for _ in label_list], [_['rotation']for _ in label_list]
         degree_lines = get_degree_lines(points, degrees)
 
         img_array = np.array(img)        

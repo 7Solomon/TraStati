@@ -3,7 +3,7 @@ import numpy as np
 from PIL import Image, ImageDraw, UnidentifiedImageError
 import matplotlib.pyplot as plt
 
-from src.visualize.draw_graph import test_drawer
+
 from src import configure
 
 
@@ -19,9 +19,12 @@ def find_zero_size(image):
     
     # Find the indices where the condition is true
     indices = np.argwhere(mask)
-    
+    print(tuple(indices[0]))
+    print(indices.size)
+
     # Return the first matching position, if any
     return tuple(indices[0]) if indices.size > 0 else None
+
             
 
             
@@ -80,6 +83,7 @@ def cut(img: Image.Image, pos: tuple, label: dict) -> Image.Image:
     # Crop image
     return img.crop((left, top, right, bottom))
 
+
     
 
 def create_label_for_cut_images(label_data: dict):
@@ -101,6 +105,10 @@ def create_label_for_cut_images(label_data: dict):
 def resize(img, label):
     try:
         position = find_zero_size(img)
+        
+        # Switch position for PIL and numpy missmatch 
+        position = (position[1],position[0])
+
         cut_image = cut(img, position, label)
 
 

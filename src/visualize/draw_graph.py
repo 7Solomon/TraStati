@@ -20,11 +20,16 @@ def init_hash_map(path):
 
 
 
-def draw_stuff_on_image_and_save(img: np.ndarray, points: list, degree_lines:list , point_color:tuple = (255, 0, 0), line_color:tuple = (0, 0, 255), save:bool = False, name='default'):
+def draw_stuff_on_image_and_save(img, points: list, degree_lines:list , point_color:tuple = (255, 0, 0), line_color:tuple = (0, 0, 255), save:bool = False, name='default'):
     """
     Zeichnet punkte und linien auf das Image
     return Image mit aufgemalten punkten und linien 
     """
+    # Converts pil image in array
+    if type(img) is Image.Image:
+        img = np.array(img)
+
+
     # Points zu ints 
     try:
         points = [(int(x),int(y)) for (x,y) in points]
@@ -87,6 +92,9 @@ def get_degree_lines(points, degrees):
     return degree_lines
 
 def get_points_from_label(value):
+    """
+    Outdated not needed anymore
+    """
     if isinstance(value[0], tuple):
         #print(value[2])
         points = [value[0]]
@@ -106,20 +114,4 @@ def get_points_and_path(path,id,value):
 
     return img, points, degree_lines
 
-def draw_some_item(idx,path = 'src/data_folder/test_dataloader/train/'):
-    #print('_____ACHTUNG_____ du hast vergessen, dass negative zahlen dir deine visiualizierung verhauen')
-    #print('!!!!')
-    #print('!!!!')
-    dict = init_hash_map(path)
-    #print(dict['dba043ff5e2e'])
-    #first_key, first_value = next(iter(dict.items()))
-    some_key, some_value = list(dict.items())[idx]
-    img, points, degree_lines = get_points_and_path(path,some_key,some_value)
-    #print(degree_lines)
-    #print(points)
-    draw_stuff_on_image_and_save(img, points,degree_lines)
 
-def test_drawer(value,img):
-    points,degrees = get_points_from_label(value)
-    degree_lines = get_degree_lines(points, degrees)
-    draw_stuff_on_image_and_save(img, points,degree_lines)

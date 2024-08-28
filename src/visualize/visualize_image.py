@@ -5,6 +5,7 @@ import cv2
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from PIL import Image
+import numpy as np
 
 
 
@@ -21,7 +22,8 @@ def visualize_image(image, title="Image", save_path=None):
         plt.axis('off')
         plt.show()
     elif configure.display_mode == "pil":
-        img = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-        img.show()
+        if type(image) is np.ndarray:
+            image = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+        image.show()
     else:
         raise ValueError("Invalid display mode. Please choose 'cv2', 'plt' or 'pil'.")
