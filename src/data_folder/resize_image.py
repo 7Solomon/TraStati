@@ -19,8 +19,6 @@ def find_zero_size(image):
     
     # Find the indices where the condition is true
     indices = np.argwhere(mask)
-    print(tuple(indices[0]))
-    print(indices.size)
 
     # Return the first matching position, if any
     return tuple(indices[0]) if indices.size > 0 else None
@@ -95,6 +93,9 @@ def create_label_for_cut_images(label_data: dict):
         x, y = element['koordinaten']
         new_point = (ABSTAND + int(x*12), ABSTAND + int(abs(y)*12))
         
+        # Transform for PIL NUMPY missmatch
+        new_point = (new_point[0],new_point[1])
+
         new_element = element.copy()
         new_element['koordinaten'] = new_point
         

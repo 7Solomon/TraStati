@@ -33,5 +33,5 @@ def rotate_image(img:Image.Image, value:dict):
         new_label[key]['koordinaten'] = (int(x),int(y))
         new_label[key]['rotation'] = new_rotation
     
-    return img, value
+    return img, new_label
 

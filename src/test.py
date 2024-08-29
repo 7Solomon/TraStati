@@ -40,14 +40,14 @@ def points_near_line(point_list, x0, y0, x1, y1, threshold_distance):
 def test():
 
     image ,id, label = create_random_image()
-    #points = [_['koordinaten'] for _ in label.values()]
-    #degree_points = [_['rotation'] for _ in label.values()]
-    #degree_lines = get_degree_lines(points, degree_points)
+    points = [_['koordinaten'] for _ in label.values()]
+    degree_points = [_['rotation'] for _ in label.values()]
+    degree_lines = get_degree_lines(points, degree_points)
 
     #print(zero_point)
     img_array = np.array(image)
-    #img = draw_stuff_on_image_and_save(img_array,[(zero_point[1],zero_point[0])],[],point_color=(255,255,0))
-    visualize_image(image)
+    img = draw_stuff_on_image_and_save(img_array,points,degree_lines,point_color=(255,255,0))
+    visualize_image(img)
     
 
 if __name__ == '__main__':
