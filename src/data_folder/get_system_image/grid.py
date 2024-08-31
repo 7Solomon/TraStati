@@ -71,6 +71,20 @@ def is_diagonal(idx1:tuple, idx2:tuple):
     return abs(idx1[0] - idx2[0]) ==1 and abs(idx1[1] - idx2[1]) == 1
 def get_opposite_edge(edge):
     return {'right': 'left', 'left': 'right', 'top': 'bot', 'bot': 'top'}[edge]
+def get_neighbor_idx(idx:tuple, shape:tuple)->list:
+    row, col = idx
+    num_rows, num_cols = shape
+    neighbors = []
+    
+    #### ADD Edge/oriantatioin detection  and then adjust deltas for them
+    deltas = [(-1, -1), (-1, 0), (-1, 1),
+                  ( 0, -1),          ( 0, 1),
+                  ( 1, -1), ( 1, 0), ( 1, 1)]
+    for dr, dc in deltas:
+        new_row, new_col = row + dr, col + dc
+        if 0 <= new_row < num_rows and 0 <= new_col < num_cols:
+            neighbors.append((new_row, new_col))
+    return neighbors
 
 def get_edge(idx1,idx2,array):
     ### Doesnt take the two possible but rather takes just the first one !!! NOt good
@@ -87,6 +101,10 @@ def get_edge(idx1,idx2,array):
     if 0 <= col1 < array.shape[0] and 0 <= row1 < array.shape[1] or 0 <= col2 < array.shape[0] and 0 <= row2 < array.shape[1]:
         return 'inside'
     raise ValueError("Not Implemented edge!")
+
+def get_zeros_next_to_connection(idx:tuple,array:np.ndarray):
+    idx_arround = get_neighbor_idx(idx, array.shape)
+    return [(_,idx) for _ in idx_arround if array[_] == 0] 
 
 
 
@@ -239,11 +257,49 @@ def generate_scheibe():
             }
 
 
+def test_append(scheibe):
+    array = scheibe['data']
+    staebe = scheibe['staebe']
+    connection_points = scheibe['connection_points']
+
+    #for (_1,_2) in connection_points:
+    #    print(_1,_2)
+    #    print(get_edge(_1,_2,array))
+
+    new_array = np.pad(array,pad_width=1,mode='constant',constant_values=0)
+    staebe = [((x1+1,y1+1),(x2+1,y2+1)) for(x1,y1),(x2,y2) in staebe] 
+    connection_points = [((x1+1,y1+1),(x2+1,y2+1)) for(x1,y1),(x2,y2) in connection_points] 
+
+    # Add
+    possible_new_staebe = []
+    for _1,_2 in connection_points:
+        possible_new_staebe.extend(get_zeros_next_to_connection(_1,new_array))
+        possible_new_staebe.extend(get_zeros_next_to_connection(_2,new_array))
+
+    # Remove duplicates with order preserved
+    possible_new_staebe = list(dict.fromkeys(possible_new_staebe))
+
+    # Set 1
+    for _ in possible_new_staebe:
+        node_idx = _[0] # first position is new node
+        new_array[node_idx] = 1
+        print('debug ' +str(node_idx))
+    
+    # Add Connections 
+    staebe.extend(possible_new_staebe)
+    return {
+            'data': new_array,
+             'staebe': staebe, 
+             'connection_points': None
+            }
+
 
 def create_fachwerk():
     ### Append scheibe mach key ERROR da 0 als knotten genommen wird???
     s = generate_scheibe()
-    #s = append_scheibe(s)
+    s = test_append(s)
+    print(s)
+    
     #s = append_scheibe(s)
     return s
 

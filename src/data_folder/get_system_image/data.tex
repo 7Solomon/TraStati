@@ -24,14 +24,56 @@
 
 
 \point{a}{0.0}{-0.0}
-\support{4}{a}270
+\support{3}{a}270
 \point{b}{20.0}{-0.0}
-\support{2}{b}180
-\point{c}{0.0}{-20.0}
-\support{2}{c}270
-\beam{4}{a}{b}
-\beam{4}{a}{c}
-\beam{4}{b}{c}
+\hinge{1}{b}
+\point{c}{40.0}{-0.0}
+\hinge{1}{c}
+\point{d}{60.0}{-0.0}
+\support{4}{d}180
+\point{e}{0.0}{-20.0}
+\hinge{1}{e}
+\point{f}{20.0}{-20.0}
+\hinge{1}{f}
+\point{g}{40.0}{-20.0}
+\hinge{1}{g}
+\point{h}{60.0}{-20.0}
+\hinge{1}{h}
+\point{i}{0.0}{-40.0}
+\hinge{1}{i}
+\point{j}{20.0}{-40.0}
+\hinge{1}{j}
+\point{k}{40.0}{-40.0}
+\hinge{1}{k}
+\point{l}{60.0}{-40.0}
+\support{3}{l}90
+\point{m}{0.0}{-60.0}
+\support{2}{m}270
+\point{n}{20.0}{-60.0}
+\hinge{1}{n}
+\point{o}{40.0}{-60.0}
+\support{3}{o}270
+\beam{4}{f}{g}
+\beam{4}{f}{j}
+\beam{4}{g}{j}
+\beam{4}{a}{f}
+\beam{4}{b}{f}
+\beam{4}{c}{f}
+\beam{4}{e}{f}
+\beam{4}{i}{f}
+\beam{4}{k}{f}
+\beam{4}{b}{g}
+\beam{4}{c}{g}
+\beam{4}{d}{g}
+\beam{4}{h}{g}
+\beam{4}{k}{g}
+\beam{4}{l}{g}
+\beam{4}{e}{j}
+\beam{4}{i}{j}
+\beam{4}{k}{j}
+\beam{4}{m}{j}
+\beam{4}{n}{j}
+\beam{4}{o}{j}
 
 \fill[red] (0, 0) circle (1pt);
 

@@ -7,7 +7,7 @@
 display_mode = "pil"
 
 # Image generation
-randomize_images = True
+randomize_images = False
 latex_abstand = 20
 generated_system_colums = 8
 generated_system_rows = 20

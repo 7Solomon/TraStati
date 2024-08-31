@@ -1,6 +1,6 @@
 # Fdb version 4
-["pdflatex"] 1724838226.59023 "c:/Users/Johan/Documents/programme/TraStati/src/data_folder/get_system_image/data.tex" "data.pdf" "data" 1724838227.99271 0
-  "c:/Users/Johan/Documents/programme/TraStati/src/data_folder/get_system_image/data.tex" 1724838225 485 adaabf37d1db8d3a6fbc39384e1051be ""
+["pdflatex"] 1725091533.92195 "c:/Users/Johan/Documents/programme/TraStati/src/data_folder/get_system_image/data.tex" "data.pdf" "data" 1725091535.39865 0
+  "c:/Users/Johan/Documents/programme/TraStati/src/data_folder/get_system_image/data.tex" 1725091533 1234 fcb2161c6f3d05b2e95f575c9eb854dc ""
   "c:/texlive/2024/texmf-dist/fonts/map/fontname/texfonts.map" 1719576449 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "c:/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmr12.tfm" 1719575618 1288 655e228510b4c2a1abe905c368440826 ""
   "c:/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb" 1719575016 32722 d7379af29a190c3f453aba36302ff5a9 ""
@@ -119,8 +119,8 @@
   "c:/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1719581382 5528846 91b99e8394d18a4b5d82e39a7eb42706 ""
   "c:/texlive/2024/texmf-var/web2c/pdftex/pdflatex.fmt" 1719581708 8239242 75e40200068ad14f1704c31375b3c133 ""
   "c:/texlive/2024/texmf.cnf" 1719581357 713 e69b156964470283e0530f5060668171 ""
-  "data.aux" 1724838227 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
-  "data.tex" 1724838225 485 adaabf37d1db8d3a6fbc39384e1051be ""
+  "data.aux" 1725091535 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
+  "data.tex" 1725091533 1234 fcb2161c6f3d05b2e95f575c9eb854dc ""
   "styles/stanli.sty" 1719565237 80521 0430078af815831b88924006b7f9b186 ""
   "styles/tikz.sty" 1719565237 354 592cf35cba3d400082b8a9a5d0199d70 ""
   (generated)

@@ -3,6 +3,7 @@ from src.data_folder.get_system_image.convert_sytem_as_png import convert_system
 from src.data_folder.get_system_image.save_system_to_tex_file import getSystemAndSave, loopSystem
 from src.data_folder.manage_datasets import create_random_image
 
+from src.data_folder.get_system_image.grid import create_fachwerk
 
 
 from src.visualize.visualize_image import visualize_image
@@ -39,14 +40,7 @@ def points_near_line(point_list, x0, y0, x1, y1, threshold_distance):
 
 def test():
 
-    image ,id, label = create_random_image()
-    points = [_['koordinaten'] for _ in label.values()]
-    degree_points = [_['rotation'] for _ in label.values()]
-    degree_lines = get_degree_lines(points, degree_points)
-
-    #print(zero_point)
-    img_array = np.array(image)
-    img = draw_stuff_on_image_and_save(img_array,points,degree_lines,point_color=(255,255,0))
+    img, id, label = create_random_image()
     visualize_image(img)
     
 
