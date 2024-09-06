@@ -9,7 +9,7 @@ from src.neural_network_stuff.custome_DETR.misc_stuff import NestedTensor, is_ma
 
 
 from src.neural_network_stuff.custome_DETR.pos_encoding import build_position_encoding
-
+from src import configure
 
 class FrozenBatchNorm2d(torch.nn.Module):
     """
@@ -105,9 +105,10 @@ class Joiner(nn.Sequential):
     
 def build_backbone():
     position_embedding = build_position_encoding()
-    train_backbone = 1e-7 #args.lr_backbone > 0    Learning rate for the backbone
-    return_interm_layers = True #args.masks
-    
+     #args.lr_backbone > 0    Learning rate for the backbone
+     #args.masks
+    train_backbone = configure.train_backbone
+    return_interm_layers = configure.return_interm_layers
     # Define das Backbone
     backbone = Backbone('resnet50', train_backbone, return_interm_layers, True) # True for dilation, kann sicher gut sein 
     model = Joiner(backbone, position_embedding)

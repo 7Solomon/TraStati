@@ -8,7 +8,7 @@ from src.neural_network_stuff.custome_DETR.transformer import build_transformer
 from src.neural_network_stuff.custome_DETR.matcher import build_matcher
 
 from src.neural_network_stuff.custome_DETR.misc_stuff import NestedTensor, get_world_size, is_dist_avail_and_initialized, nested_tensor_from_tensor_list, accuracy, interpolate 
-
+from src import configure
 #from .segmentation import (DETRsegm, PostProcessPanoptic, PostProcessSegm,
 #                           dice_loss, sigmoid_focal_loss)
 
@@ -243,12 +243,14 @@ class SetCriterion(nn.Module):
 def build():
 
     # Args stuff
-    cD_loss_coef = 5
-    giou_loss_coef = 2
-    eos_coef = 0.1
+    cD_loss_coef = configure.cD_loss_coef
+    ce_loss_coef = configure.ce_loss_coef
+    giou_loss_coef = configure.giou_loss_coef
+    eos_coef = configure.eos_coef
+    num_classes = configure.num_classes
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     
-    num_classes = 5
+    
     device = torch.device(device)
 
     model = CustomeDetrModel(
@@ -257,7 +259,7 @@ def build():
     )
 
     matcher = build_matcher()
-    weight_dict = {'loss_ce': 1, 'loss_cD': cD_loss_coef}
+    weight_dict = {'loss_ce': ce_loss_coef, 'loss_cD': cD_loss_coef}
     weight_dict['loss_giou'] = giou_loss_coef
 
 

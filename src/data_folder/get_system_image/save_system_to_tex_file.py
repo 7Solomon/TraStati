@@ -3,7 +3,8 @@ import argparse
 import os
 import string
 
-from src.data_folder.get_system_image.grid import get_lengths, create_fachwerk
+from src.data_folder.get_system_image.grid.grid_generation import create_fachwerk
+from src.data_folder.get_system_image.grid.koordinaten import get_lengths
 import src.configure as configure 
 positionABCMap = {}
 intToABC = dict(enumerate(string.ascii_lowercase))

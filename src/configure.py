@@ -24,6 +24,34 @@ batch_size = 6
 num_workers = 2   
 clip_max_norm = 0.1
 
+# Backbone
+train_backbone = 1e-7
+return_interm_layers = True
+
+# Detr
+num_classes = 5 ##
+cD_loss_coef = 5
+ce_loss_coef = 1
+giou_loss_coef = 2
+eos_coef = 0.1
+
+# Matcher
+cost_class=1
+cost_cD=5
+
+# posEmbedding
+N_steps = 256 // 2
+
+# Trasnformer
+d_model=25
+dropout=0.01
+nhead=2
+dim_feedforward=512
+num_encoder_layers=2
+num_decoder_layers=2
+normalize_before=True
+return_intermediate_dec=True
+
 ### Erstellung system
 
 # Conenction Map Parameter

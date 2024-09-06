@@ -3,7 +3,7 @@ from src.data_folder.get_system_image.convert_sytem_as_png import convert_system
 from src.data_folder.get_system_image.save_system_to_tex_file import getSystemAndSave, loopSystem
 from src.data_folder.manage_datasets import create_random_image
 
-from src.data_folder.get_system_image.grid import create_fachwerk
+from src.data_folder.get_system_image.grid.grid_generation import create_fachwerk
 
 
 from src.visualize.visualize_image import visualize_image
